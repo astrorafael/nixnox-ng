@@ -370,7 +370,7 @@ def make_Location(declarative_base: Type) -> Type:
                 self.population_centre_type.value if self.population_centre_type else None
             )
             return r
-    return make_Location
+    return Location
 
 def make_Photometer(declarative_base: Type) -> Type:
     class Photometer(declarative_base):
