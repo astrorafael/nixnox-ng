@@ -17,12 +17,21 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Topic :: Scientific/Engineering :: Astronomy",
 ]
-dependencies = []
+
+dependencies = [
+  # Async Database stuff
+  "SQLAlchemy[asyncio]>=2.0",
+  "alembic",
+  "aiosqlite", # asyncio sqlite connector
+  "lica[aiosqlalchemy]>=2.0", # needs lica library from 2.x on
+  "pytz"
+]
+
 
 
 [project.scripts]
 # Additional tools
-mixnox-schema = "nixnox_dao_cli.main:main"
+nx-db-schema = "nixnox_dao.cli.schema:main"
 
 # ------------------------
 # DYNAMIC VERSIONING STUFF

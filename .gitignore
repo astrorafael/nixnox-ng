@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# My own stuff
+.env
+secrets.toml
+_version.py
+*.db
+*.csv
+*.ecsv
+*.bak
+*.log
+*.txt
+!requirements.txt
+test*.py
+# This is experimental
+sqld-*
+data.sqld/

@@ -51,6 +51,11 @@ test-publish pkg="zptess": build
         --extra-index-url https://pypi.org/simple/ \
         -- python -c "from {{pkg}} import __version__; print(__version__)"
 
+
+
+
+
+
 # Adds lica source library as dependency. 'version' may be a tag or branch
 lica-dev version="main":
     #!/usr/bin/env bash
@@ -82,6 +87,7 @@ env-bak drive=def_drive: (check_mnt drive) (env-backup join(drive, "env", projec
 # Restore .env from storage unit
 env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", project))
 
+
 # Starts a new SQLite database export migration cycle   
 schema env="devel" verbose="":
     #!/usr/bin/env bash
@@ -98,7 +104,7 @@ anew verbose="":
     set -exuo pipefail
     uv sync --reinstall
     uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
-    uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 50000
+    #uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 50000
 
 # Starts a new SQLD database export migration cycle
 # we need to add 127.0.0.1 *.db.sarna.dev to /etc/local/hosts

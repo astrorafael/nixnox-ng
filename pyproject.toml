@@ -9,3 +9,11 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 nixnox-dao = { workspace = true }
+
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "mypy",
+]
