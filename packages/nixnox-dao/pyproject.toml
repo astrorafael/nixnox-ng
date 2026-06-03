@@ -30,8 +30,9 @@ dependencies = [
 
 
 [project.scripts]
-# Additional tools
+# Additional tools.
 nx-db-schema = "nixnox_dao.cli.schema:main"
+nx-db-populate = "nixnox_dao.cli.populate:main"
 
 # ------------------------
 # DYNAMIC VERSIONING STUFF
