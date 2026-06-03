@@ -8,7 +8,6 @@
 # System wide imports
 # -------------------
 
-import os
 from datetime import datetime
 from argparse import ArgumentParser
 
@@ -58,11 +57,12 @@ def seconds() -> ArgumentParser:
         "-e",
         "--seconds",
         type=int,
-        choices=[i for i in range(1,61)],
+        choices=[i for i in range(1, 61)],
         default=1,
         help="Default seconds resolution (default %(default)s)",
     )
     return parser
+
 
 def batch() -> ArgumentParser:
     parser = ArgumentParser(add_help=False)

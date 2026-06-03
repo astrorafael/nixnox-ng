@@ -9,7 +9,7 @@
 # -------------------
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from itertools import batched
 from argparse import ArgumentParser, Namespace
 
@@ -28,8 +28,8 @@ from lica.cli import execute
 
 from .. import __version__
 from .util import parser as prs
-from ..noasync import Date, Time, Location, Organization, Location
-from ..constants import Coordinates, ObserverType, ValidState
+from ..noasync import Date, Time, Organization, Location
+from ..constants import Coordinates
 
 # ----------------
 # Module constants
