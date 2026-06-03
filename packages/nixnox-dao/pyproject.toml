@@ -1,0 +1,56 @@
+[project]
+name = "nixnox-dao"
+dynamic = ["version"]
+description = "NIXNOX Data Access Objec layer in SQLAlchemy"
+readme = "README.md"
+requires-python = ">=3.12"
+license-files = ["LICENSE"]
+authors = [
+    {name = "Rafael González", email = "astrorafael@gmail.com"},
+]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = []
+
+
+[project.scripts]
+# Additional tools
+mixnox-schema = "nixnox_dao_cli.main:main"
+
+# ------------------------
+# DYNAMIC VERSIONING STUFF
+# ------------------------
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nixnox-dao",]
+only-include = ["src/nixnox_dao", "scripts"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+"scripts" = "nixnox-dao/scripts"
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.1.0"
+
+# -----------
+# Other stuff
+# -----------
+
+[tool.ruff]
+line-length = 100
+

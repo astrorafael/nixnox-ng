@@ -1,0 +1,12 @@
+version = 1
+requires-python = ">=3.12"
+
+[manifest]
+members = [
+    "nixnox-dao",
+]
+
+[[package]]
+name = "nixnox-dao"
+version = "0.0.0.post1.dev0+a6bcc6c"
+source = { editable = "packages/nixnox-dao" }
