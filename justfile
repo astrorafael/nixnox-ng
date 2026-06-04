@@ -85,7 +85,7 @@ export:
 web:
     #!/usr/bin/env bash   
     set -exuo pipefail
-    NX_ENV=dev uv run streamlit run web_app.py --logger.level=debug
+    NX_ENV=dev uv run streamlit run packages/nixnox-web/web_app.py --logger.level=debug
 
 # Starts LibSQL sqld server: debug|release
 sqld target="debug":
