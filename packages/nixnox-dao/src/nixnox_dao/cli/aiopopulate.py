@@ -20,7 +20,6 @@ from argparse import ArgumentParser, Namespace
 
 from lica.sqlalchemy import sqa_logging
 from lica.sqlalchemy.asyncio.dbase import create_engine_sessionclass
-from lica.sqlalchemy.asyncio.model import Model
 from lica.asyncio.cli import execute
 
 # --------------

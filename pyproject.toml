@@ -5,10 +5,11 @@
 # Every subproject here may have a deparate entry in PyPi
 # tagging must be per-project: git tag nixnox-dao-0.1.0
 [tool.uv.workspace]
-members = ["packages/nixnox-dao"]
+members = ["packages/nixnox-dao", "packages/nixnox-core", "packages/nixnox-tools"]
 
 [tool.uv.sources]
 nixnox-dao = { workspace = true }
+nixnox-core = { workspace = true }
 
 
 [dependency-groups]

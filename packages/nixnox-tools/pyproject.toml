@@ -1,0 +1,62 @@
+[project]
+name = "nixnox-tools"
+dynamic = ["version"]
+description = "NIXNOX CLI tools"
+readme = "README.md"
+requires-python = ">=3.12"
+license-files = ["LICENSE"]
+authors = [
+    {name = "Rafael González", email = "rafael08@ucm.es"},
+    {name = "Jaime Zamorano", email ="jzamoran@ucm.es"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+dependencies = [
+   "nixnox-core" 
+  
+]
+
+
+
+[project.scripts]
+# Additional tools.
+nx-ecsv-import = "nixnox_tools.ecsv:dbimport"
+nx-ecsv-export = "nixnox_tools.ecsv:dbexport"
+nx-ecsv-obsload = "nixnox_tools.ecsv:obsload"
+
+# ------------------------
+# DYNAMIC VERSIONING STUFF
+# ------------------------
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nixnox-tools",]
+only-include = ["src/nixnox_tools"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.1.0"
+
+# -----------
+# Other stuff
+# -----------
+
+[tool.ruff]
+line-length = 100
+
