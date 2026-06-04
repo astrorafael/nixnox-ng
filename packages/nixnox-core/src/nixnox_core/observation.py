@@ -16,6 +16,7 @@ from typing import Sequence, Any
 # ---------------------
 # Third party libraries
 # ---------------------
+
 from sqlalchemy import select, func, desc, label
 from sqlalchemy.orm import Row
 
