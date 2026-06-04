@@ -24,11 +24,8 @@ from .constants import (
     PopulationCentre,
 )
 
-from .utils import observer_name
-
 __all__ = [
     "__version__",
-    "observer_name",
     "ObserverType",
     "ValidState",
     "PhotometerModel",

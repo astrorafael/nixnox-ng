@@ -1,19 +1,15 @@
 # ----------------------------------------------------------------------
-# Copyright (c) 2024 Rafael Gonzalez.
+# Copyright (c) 2020
 #
 # See the LICENSE file for details
+# see the AUTHORS file for authors
 # ----------------------------------------------------------------------
-
 
 # --------------------
 # System wide imports
 # -------------------
 
-# -----------
-# Own modules
-# -----------
-
-from .constants import ObserverType
+from nixnox_dao import ObserverType
 
 
 def observer_name(observer: dict) -> str:
