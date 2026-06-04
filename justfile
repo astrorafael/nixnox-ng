@@ -24,10 +24,6 @@ tools:
     uv tool install twine
     uv tool install ruff
 
-# Add conveniente development dependencies
-dev:
-    uv add --dev pytest
-
 # Build the package
 build:
     rm -fr dist/*

@@ -6,11 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 license-files = ["LICENSE"]
 authors = [
-    {name = "Rafael González", email = "astrorafael@gmail.com"},
+    {name = "Rafael González", email = "rafael08@ucm.es"},
+    {name = "Jaime Zamorano", email ="jzamoran@ucm.es"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Science/Research",
@@ -23,6 +23,7 @@ dependencies = [
   "SQLAlchemy[asyncio]>=2.0",
   "alembic",
   "aiosqlite", # asyncio sqlite connector
+  "sqlalchemy-libsql", # For libSQL variant of SQLite, see https://github.com/tursodatabase/libsql
   "lica[aiosqlalchemy]>=2.0", # needs lica library from 2.x on
   "pytz"
 ]
