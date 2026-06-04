@@ -29,70 +29,13 @@ build:
     rm -fr dist/*
     uv build
 
-# Generate a requirements file
-requirements:
-    uv pip compile pyproject.toml -o requirements.txt
 
-# Publish the package to PyPi
-publish pkg="zptess": build
-    twine upload -r pypi dist/*
-    uv run --no-project --with {{pkg}} --refresh-package {{pkg}} \
-        -- python -c "from {{pkg}} import __version__; print(__version__)"
-
-# Publish to Test PyPi server
-test-publish pkg="zptess": build
-    twine upload --verbose -r testpypi dist/*
-    uv run --no-project  --with {{pkg}} --refresh-package {{pkg}} \
-        --index-url https://test.pypi.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ \
-        -- python -c "from {{pkg}} import __version__; print(__version__)"
-
-
-
-
-
-
-# Adds lica source library as dependency. 'version' may be a tag or branch
-lica-dev version="main":
-    #!/usr/bin/env bash
-    set -exuo pipefail
-    echo "Removing previous LICA dependency"
-    uv add aiohttp pyserial-asyncio aioserial tabulate
-    uv remove lica || echo "Ignoring non existing LICA library";
-    if [[ "{{ version }}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-        echo "Adding LICA source library --tag {{ version }}"; 
-        uv add git+https://github.com/guaix-ucm/lica --tag {{ version }};
-    else
-        echo "Adding LICA source library --branch {{ version }}";
-        uv add git+https://github.com/guaix-ucm/lica --branch {{ version }};
-    fi
-
-# Adds lica release library as dependency with a given version
-lica-rel version:
-    #!/usr/bin/env bash
-    set -exuo pipefail
-    echo "Removing previous LICA dependency"
-    uv remove lica
-    echo "Adding release version of LICA library";
-    uv add --refresh-package lica lica[photometer,tabular];
-    uv remove aiohttp aioserial pyserial-asyncio tabulate
 
 # Backup .env to storage unit
 env-bak drive=def_drive: (check_mnt drive) (env-backup join(drive, "env", project))
 
 # Restore .env from storage unit
 env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", project))
-
-
-# Starts a new SQLite database export migration cycle   
-schema env="devel" verbose="":
-    #!/usr/bin/env bash
-    set -exuo pipefail
-    env={{env}}
-    uv sync --reinstall
-    curl -X DELETE http://localhost:8082/v1/namespaces/${env}
-    curl -X POST http://localhost:8082/v1/namespaces/${env}/create -d '{}' -H "Content-Type: application/json" 
-    uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
 
 # Starts a new SQLite database export migration cycle   
 anew verbose="":

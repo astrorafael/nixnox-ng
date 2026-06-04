@@ -27,9 +27,9 @@ dependencies = [
 
 [project.scripts]
 # Additional tools.
-nx-ecsv-import = "nixnox_tools.ecsv:dbimport"
-nx-ecsv-export = "nixnox_tools.ecsv:dbexport"
-nx-ecsv-obsload = "nixnox_tools.ecsv:obsload"
+nx-db-import = "nixnox_tools.ecsv:dbimport"
+nx-db-export = "nixnox_tools.ecsv:dbexport"
+nx-obs-load = "nixnox_tools.ecsv:obsload"
 
 # ------------------------
 # DYNAMIC VERSIONING STUFF
