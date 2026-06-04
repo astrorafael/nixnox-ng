@@ -35,7 +35,7 @@ from nixnox_core import uploader, database_import, database_export, AlreadyExist
 # Module constants
 # ----------------
 
-DESCRIPTION = "NIXNOX Database load ECSV tool"
+DESCRIPTION = "NIXNOX Database import/export ECSV tools"
 
 # -----------------------
 # Module global variables
