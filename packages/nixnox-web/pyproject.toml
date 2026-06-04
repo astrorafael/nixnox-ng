@@ -1,7 +1,7 @@
 [project]
-name = "nixnox-core"
+name = "nixnox-web"
 dynamic = ["version"]
-description = "NIXNOX core components"
+description = "NIXNOX Web Application"
 readme = "README.md"
 requires-python = ">=3.12"
 license-files = ["LICENSE"]
@@ -20,12 +20,12 @@ classifiers = [
 
 dependencies = [
     "nixnox-dao",
-    "geopy",
-    "pytz",
-    "timezonefinder",
-    "astropy",
-    "scipy",
-    "matplotlib",
+    "nixnox-core",
+    "python-dateutil",
+    "streamlit",
+    "pydantic",
+    "email-validator",
+    "pandas",
 ]
 
 
@@ -42,8 +42,8 @@ source = "uv-dynamic-versioning"
 
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/nixnox-core",]
-only-include = ["src/nixnox_core"]
+packages = ["src/nixnox-web",]
+only-include = ["src/nixnox_web"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""

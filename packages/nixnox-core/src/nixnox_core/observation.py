@@ -1,0 +1,182 @@
+# ----------------------------------------------------------------------
+# Copyright (c) 2024 Rafael Gonzalez.
+#
+# See the LICENSE file for details
+# ----------------------------------------------------------------------
+
+# --------------------
+# System wide imports
+# -------------------
+
+import logging
+
+from io import StringIO
+from typing import Sequence, Any
+
+# ---------------------
+# Third party libraries
+# ---------------------
+from sqlalchemy import select, func, desc, label
+from sqlalchemy.orm import Row
+
+from nixnox_dao import PhotometerModel, ObserverType
+from nixnox_dao.noasync import (
+    Photometer,
+    Observer,
+    Person,
+    Organization,
+    Observation,
+    Location,
+    Measurement,
+)
+
+# -------------
+# Local imports
+# -------------
+
+from .tas import TASExporter
+
+# ----------------
+# Global variables
+# ----------------
+
+# get the root logger
+log = logging.getLogger(__name__.split(".")[-1])
+
+
+def obs_nsummaries(session) -> int:
+    q = select(func.count("*")).select_from(Observation)
+    return session.scalars(q).one()
+
+
+def obs_summary_search(session, cond: dict = None) -> Sequence[Any]:
+    """Generic Observation summary search with several constratints"""
+    cond = cond or dict()
+    over_type = cond.get("search_by_observer_type") or ObserverType.PERSON
+    limit = cond.get("search_limit", 10)
+    q = (
+        select(
+            Observation.timestamp_1.label("date"),
+            Observation.identifier.label("tag"),
+            Location.place,
+            Photometer.name.label("photometer"),
+            label(
+                "observer",
+                Person.name if over_type == ObserverType.PERSON else Organization.org_name,
+            ),
+        )
+        .select_from(Measurement)
+        .join(Observation, Measurement.obs_id == Observation.obs_id)
+        .join(Location, Measurement.location_id == Location.location_id)
+        .join(Observer, Measurement.observer_id == Observer.observer_id)
+        .join(Photometer, Measurement.phot_id == Photometer.phot_id)
+    )
+    log.info("CONDITIONS DICT = %s", cond)
+    if len(cond) != 0:
+        limit = cond["search_limit"]
+        # Always add the date conditions
+        start_date_id = int(cond["search_date_range"][0].strftime("%Y%m%d"))
+        end_date_id = int(cond["search_date_range"][1].strftime("%Y%m%d"))
+        q = q.where(Measurement.date_id.between(start_date_id, end_date_id))
+        # Add photometer conditions if any
+        if cond["search_by_phot_name"]:
+            q = q.where(
+                Photometer.model == cond["search_by_phot_model"],
+                Photometer.name == cond["search_by_phot_name"],
+            )
+        # Add Observer conditions if any
+        if cond["search_by_observer_name"]:
+            if cond["search_by_observer_type"] == ObserverType.PERSON:
+                q = q.where(
+                    Person.name.like("%" + cond["search_by_observer_name"] + "%"),
+                )
+            else:
+                q = q.where(
+                    Organization.org_name.like("%" + cond["search_by_observer_name"] + "%"),
+                )
+        # Add Location conditions if any
+        if cond["search_by_location_name"] and cond["search_by_location_scope"] == "Country":
+            q = q.where(
+                Location.country.like("%" + cond["search_by_location_name"] + "%"),
+            )
+        elif (
+            cond["search_by_location_name"]
+            and cond["search_by_location_scope"] == "Population Centre"
+        ):
+            q = q.where(
+                Location.population_centre.like("%" + cond["search_by_location_name"] + "%"),
+            )
+        else:
+            # All coords must be not None
+            good_coords = list(
+                map(
+                    lambda x: x is not None,
+                    [
+                        cond["search_from_longitude"],
+                        cond["search_to_longitude"],
+                        cond["search_from_latitude"],
+                        cond["search_to_latitude"],
+                    ],
+                )
+            )
+            if all(good_coords):
+                long1 = min(cond["search_from_longitude"], cond["search_to_longitude"])
+                long2 = max(cond["search_from_longitude"], cond["search_to_longitude"])
+                lat1 = min(cond["search_from_latitude"], cond["search_to_latitude"])
+                lat2 = max(cond["search_from_latitude"], cond["search_to_latitude"])
+                q = q.where(
+                    Location.longitude.between(long1, long2),
+                    Location.latitude.between(lat1, lat2),
+                )
+    # Finalize the query
+    q = (
+        q.group_by(Measurement.obs_id)
+        .order_by(desc(Measurement.date_id), desc(Measurement.time_id))
+        .limit(limit)
+    )
+    log.info("QUERY = %s", str(q))
+    return session.execute(q).all()
+
+
+def obs_details(session, obs_tag: str) -> Row[tuple[Observation, Observer, Location, Photometer]]:
+    q = (
+        select(Observation, Observer, Location, Photometer)
+        .select_from(Measurement)
+        .join(Observation, Measurement.obs_id == Observation.obs_id)
+        .join(Location, Measurement.location_id == Location.location_id)
+        .join(Observer, Measurement.observer_id == Observer.observer_id)
+        .join(Photometer, Measurement.phot_id == Photometer.phot_id)
+        .where(Observation.identifier == obs_tag)
+        .group_by(Measurement.obs_id)
+    )
+    return session.execute(q).one()
+
+
+def obs_measurements(session, obs_tag: str) -> Sequence[Measurement]:
+    q = (
+        select(Measurement)
+        .select_from(Measurement)
+        .join(Observation, Measurement.obs_id == Observation.obs_id)
+        .join(Location, Measurement.location_id == Location.location_id)
+        .join(Observer, Measurement.observer_id == Observer.observer_id)
+        .join(Photometer, Measurement.phot_id == Photometer.phot_id)
+        .where(Observation.identifier == obs_tag)
+    )
+    return session.scalars(q).all()
+
+
+def obs_export(session, obs_tag: str) -> str:
+    """Outputs a ECSV formatted string suitable to be sent to a web browser"""
+    q = select(Observation).where(Observation.identifier == obs_tag)
+    observation = session.scalars(q).one_or_none()
+    measurements = observation.measurements
+    location = measurements[0].location
+    observer = measurements[0].observer
+    photometer = measurements[0].photometer
+    if photometer.model == PhotometerModel.TAS:
+        table = TASExporter().to_table(photometer, observation, location, observer, measurements)
+    else:
+        raise NotImplementedError
+    output_file = StringIO()
+    table.write(output_file, delimiter=",", format="ascii.ecsv", overwrite=True)
+    return output_file.getvalue()
