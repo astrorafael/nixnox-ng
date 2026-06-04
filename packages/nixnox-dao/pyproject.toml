@@ -1,7 +1,7 @@
 [project]
 name = "nixnox-dao"
 dynamic = ["version"]
-description = "NIXNOX Data Access Objec layer in SQLAlchemy"
+description = "NIXNOX Data Access Object layer in SQLAlchemy"
 readme = "README.md"
 requires-python = ">=3.12"
 license-files = ["LICENSE"]
@@ -19,7 +19,6 @@ classifiers = [
 ]
 
 dependencies = [
-  # Async Database stuff
   "SQLAlchemy[asyncio]>=2.0",
   "alembic",
   "aiosqlite", # asyncio sqlite connector
