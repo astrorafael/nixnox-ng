@@ -29,6 +29,11 @@ dependencies = [
 ]
 
 
+[project.scripts]
+# Additional tools.
+nixnox-web = "nixnox_web.main:main"
+
+
 # ------------------------
 # DYNAMIC VERSIONING STUFF
 # ------------------------

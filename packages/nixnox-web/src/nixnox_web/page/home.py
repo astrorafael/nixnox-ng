@@ -21,7 +21,7 @@ import nixnox_core.observation as db
 # -------------
 
 
-from nixnox.web.streamlit import ttl
+from nixnox_web.streamlit import ttl
 
 
 # ----------------

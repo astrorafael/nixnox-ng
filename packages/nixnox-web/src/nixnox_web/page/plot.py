@@ -20,14 +20,14 @@ from streamlit import logger
 
 from astropy.table import Table
 
-import nixnox.web.dbase as db
 import nixnox_core.mpl as mpl
+from nixnox_core.observation import obs_details, obs_measurements
 
 # -------------
 # Own libraries
 # --------------
 
-from .streamlit import ttl
+from nixnox_web.streamlit import ttl
 
 
 def obs_init(conn: SQLConnection) -> str | None:
@@ -37,28 +37,30 @@ def obs_init(conn: SQLConnection) -> str | None:
     result = st.session_state["obs_summ"]["selected"][1] if selected else None
     return result
 
+
 # ============
 # PAGE OBJECTS
 # ============
 
 # According to dthe streamlit documebtation:
-# """Matplotlib doesn't work well with threads. 
-#    So if you're using Matplotlib you should wrap your code with locks. 
-#    This Matplotlib bug is more prominent when you deploy and share your apps 
+# """Matplotlib doesn't work well with threads.
+#    So if you're using Matplotlib you should wrap your code with locks.
+#    This Matplotlib bug is more prominent when you deploy and share your apps
 #    because you're more likely to get concurrent users then.""""
 
 
 log = logger.get_logger(__name__)
 conn = st.connection("env:NX_ENV", type="sql")
 
+
 @st.cache_data(ttl=ttl())
 def get_observation_details(_session, obs_tag: str):
-    return db.obs_details(_session, obs_tag)
+    return obs_details(_session, obs_tag)
 
 
 @st.cache_data(ttl=ttl())
 def get_measurements(_session, obs_tag: str):
-    return db.obs_measurements(_session, obs_tag)
+    return obs_measurements(_session, obs_tag)
 
 
 @st.cache_data(ttl=ttl())
@@ -76,6 +78,7 @@ def plot(
         photometer=_photometer,
     )
 
+
 def plot_init(conn: SQLConnection) -> str | None:
     st.title("Night Sky Brightness Plot")
     selected = st.session_state["obs_summ"]["selected"]
@@ -84,10 +87,11 @@ def plot_init(conn: SQLConnection) -> str | None:
     result = st.session_state["obs_summ"]["selected"][1] if selected else None
     return result
 
+
 def plot_view(conn: SQLConnection, obs_tag: str) -> None:
     with conn.session as session:
-        observation, observer, location, photometer = db.obs_details(session, obs_tag)
-        measurements = db.obs_measurements(session, obs_tag)
+        observation, observer, location, photometer = obs_details(session, obs_tag)
+        measurements = obs_measurements(session, obs_tag)
         measurements = Table([m.to_dict() for m in measurements])
         with RLock():
             figure = plot(

@@ -18,7 +18,7 @@ from typing import Sequence, Any
 # ---------------------
 
 from sqlalchemy import select, func, desc, label
-from sqlalchemy.orm import Row
+from sqlalchemy import Row
 
 from nixnox_dao import PhotometerModel, ObserverType
 from nixnox_dao.noasync import (

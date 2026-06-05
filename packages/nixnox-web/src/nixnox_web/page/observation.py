@@ -18,7 +18,7 @@ import nixnox_core.observation as db
 # Own libraries
 # --------------
 
-from .streamlit import ttl
+from nixnox_web.streamlit import ttl
 
 # ============
 # PAGE OBJECTS

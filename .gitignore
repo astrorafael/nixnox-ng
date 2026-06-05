@@ -12,7 +12,6 @@ wheels/
 # My own stuff
 .env
 secrets.toml
-_version.py
 *.db
 *.csv
 *.ecsv

@@ -82,10 +82,15 @@ export:
 # NIXNOX WEB TEST AND PROTOTYPES #
 # ============================== #
 
-web:
+webo:
     #!/usr/bin/env bash   
     set -exuo pipefail
     NX_ENV=dev uv run streamlit run packages/nixnox-web/web_app.py --logger.level=debug
+
+web:
+    #!/usr/bin/env bash   
+    set -exuo pipefail
+    NX_ENV=dev uv run nixnox-web
 
 # Starts LibSQL sqld server: debug|release
 sqld target="debug":
