@@ -17,3 +17,19 @@ The development is divided in the following workspaces:
 	```bash
 	uv pip install nixnox-tools nixnox-web
 	```
+
+# Configuration
+
+1. create a `.env` file to hold envirnoment variables
+2. create a `.streamlit` directory and add two new files to it: `config.toml` `secrets.toml`
+
+## Envirenmet variables
+
+The following variables are needed:
+```bash
+NIXNOX_DB_URL=sqlite:///nixnox.db
+# NIXNOX_DB_URL=sqlite+libsql://devel.db.sarna.dev:8080
+AUTH_DB_URL==sqlite:///auth.db
+```
+
+

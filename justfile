@@ -47,7 +47,7 @@ anew verbose="":
 
 # Starts a new SQLD database export migration cycle
 # we need to add 127.0.0.1 *.db.sarna.dev to /etc/local/hosts
-# and DATABASE_URL=sqlite+libsql://nixnox.db.sarna.dev:8080
+# and NIXNOX_DB_URL=sqlite+libsql://nixnox.db.sarna.dev:8080
 anew2 env="devel":
     #!/usr/bin/env bash
     set -exuo pipefail

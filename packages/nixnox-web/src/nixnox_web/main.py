@@ -22,10 +22,6 @@ def main():
         help="Additional arguments to pass to streamlit run",
     )
     args = parser.parse_args()
-    # Configurar NX_ENV=dev
-    # env = os.environ.copy()
-    # env["NX_ENV"] = "dev"
-
     package_dir = Path(__file__).parent
     web_app_path = package_dir / "web_app.py"
 

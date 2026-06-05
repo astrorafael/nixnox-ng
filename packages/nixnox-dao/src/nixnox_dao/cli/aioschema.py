@@ -45,7 +45,7 @@ DESCRIPTION = "NIXNOX Database initial schema generation tool"
 log = logging.getLogger(__name__.split(".")[-1])
 
 # get the database engine and session factory object
-engine, Session = create_engine_sessionclass(env_var="DATABASE_URL")
+engine, Session = create_engine_sessionclass(env_var="NIXNOX_DB_URL")
 
 # -------------------
 # Auxiliary functions
