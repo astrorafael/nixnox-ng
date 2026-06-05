@@ -16,26 +16,25 @@ from argparse import ArgumentParser, Namespace
 # -------------------
 
 from lica.sqlalchemy import sqa_logging
-from lica.sqlalchemy.asyncio.dbase import create_engine_sessionclass
-from lica.sqlalchemy.asyncio.model import Model
-from lica.asyncio.cli import execute
+from lica.sqlalchemy.noasync.dbase import create_engine_sessionclass
+from lica.sqlalchemy.noasync.model import Model
+from lica.cli import execute
 
 # --------------
 # local imports
 # -------------
 
-
-from .. import __version__
+from nixnox_dao import __version__
 
 # We must pull one model to make it work
-from ..asyncio import Date  # noqa: F401
+from nixnox_dao.auth.noasync import User  # noqa: F401
 
 
 # ----------------
 # Module constants
 # ----------------
 
-DESCRIPTION = "NIXNOX Database initial schema generation tool"
+DESCRIPTION = "NIXNOX Authentication database initial schema generation tool"
 
 # -----------------------
 # Module global variables
@@ -45,23 +44,23 @@ DESCRIPTION = "NIXNOX Database initial schema generation tool"
 log = logging.getLogger(__name__.split(".")[-1])
 
 # get the database engine and session factory object
-engine, Session = create_engine_sessionclass(env_var="NIXNOX_DB_URL")
+engine, Session = create_engine_sessionclass(env_var="AUTH_DB_URL")
 
 # -------------------
 # Auxiliary functions
 # -------------------
 
 
-async def schema() -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Model.metadata.drop_all)
-        await conn.run_sync(Model.metadata.create_all)
-    await engine.dispose()
+def schema() -> None:
+    with engine.begin():
+        Model.metadata.drop_all(bind=engine)
+        Model.metadata.create_all(bind=engine)
+    engine.dispose()
 
 
-async def cli_main(args: Namespace) -> None:
+def cli_main(args: Namespace) -> None:
     sqa_logging(args)
-    await schema()
+    schema()
 
 
 def add_args(parser: ArgumentParser) -> None:

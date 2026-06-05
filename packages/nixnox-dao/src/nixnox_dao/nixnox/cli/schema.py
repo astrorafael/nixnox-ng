@@ -24,10 +24,10 @@ from lica.cli import execute
 # local imports
 # -------------
 
-from .. import __version__
+from nixnox_dao import __version__
 
 # We must pull one model to make it work
-from ..noasync import Date  # noqa: F401
+from nixnox_dao.nixnox.noasync import Date  # noqa: F401
 
 # ----------------
 # Module constants

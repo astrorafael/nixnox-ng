@@ -26,10 +26,10 @@ from lica.asyncio.cli import execute
 # local imports
 # -------------
 
-from .. import __version__
-from .util import parser as prs
-from ..noasync import Date, Time, Organization, Location
-from ..constants import Coordinates
+from ... import __version__
+from ..util import parser as prs
+from ...noasync import Date, Time, Organization, Location
+from ...constants import Coordinates
 
 # ----------------
 # Module constants
@@ -206,7 +206,6 @@ def add_args(parser: ArgumentParser) -> None:
         help="Load all initial values",
     )
     p.set_defaults(func=cli_populate_all)
-
 
 
 async def cli_main(args: Namespace) -> None:

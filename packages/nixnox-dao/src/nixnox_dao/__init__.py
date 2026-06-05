@@ -13,7 +13,7 @@ except (ImportError, PackageNotFoundError, LookupError):
 # Reimports
 # ---------
 
-from .constants import (
+from .nixnox.constants import (
     ObserverType,
     ValidState,
     PhotometerModel,
@@ -23,6 +23,8 @@ from .constants import (
     Timestamp,
     PopulationCentre,
 )
+
+from .auth.constants import AuthRole
 
 __all__ = [
     "__version__",
@@ -34,4 +36,5 @@ __all__ = [
     "Coordinates",
     "Timestamp",
     "PopulationCentre",
+    "AuthRole",
 ]

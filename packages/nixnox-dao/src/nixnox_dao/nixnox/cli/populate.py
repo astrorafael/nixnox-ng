@@ -26,10 +26,11 @@ from lica.cli import execute
 # local imports
 # -------------
 
-from .. import __version__
+from nixnox_dao import __version__
+from nixnox_dao.nixnox.noasync import Date, Time, Organization, Location
+from nixnox_dao.nixnox.constants import Coordinates
 from .util import parser as prs
-from ..noasync import Date, Time, Organization, Location
-from ..constants import Coordinates
+
 
 # ----------------
 # Module constants
@@ -180,8 +181,8 @@ def cli_populate_observer(session: Session, args: Namespace) -> None:
 
 
 def cli_populate_all(session: Session, args: Namespace) -> None:
-    #cli_populate_observer(session, args)
-    #cli_populate_location(session, args)
+    # cli_populate_observer(session, args)
+    # cli_populate_location(session, args)
     cli_populate_date(session, args)
     cli_populate_time(session, args)
 

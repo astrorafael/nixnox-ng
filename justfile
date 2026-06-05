@@ -42,6 +42,8 @@ anew verbose="":
     #!/usr/bin/env bash
     set -exuo pipefail
     uv sync --reinstall
+    uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
+    uv run nx-auth-populate --console --trace --log-file nixnox.log {{ verbose }}
     uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
     uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 50000
 

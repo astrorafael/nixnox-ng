@@ -14,13 +14,13 @@ from typing import Type
 # Third party libraries
 # ---------------------
 
-from lica.sqlalchemy.asyncio.model import Model
+from lica.sqlalchemy.noasync.model import Model
 
 # -------------------
 # Own package imports
 # -------------------
 
-from .model import (
+from nixnox_dao.nixnox.model import (
     make_Time,
     make_Date,
     make_Observer,
@@ -29,11 +29,13 @@ from .model import (
     make_Location,
     make_Photometer,
     make_Observation,
-    make_Measurement
+    make_Measurement,
 )
+
 
 # Tables creation with the no async Model behaviour built-in
 
+# NIXNOX Data Access Objects
 Date: Type = make_Date(Model)
 Time: Type = make_Time(Model)
 Observer: Type = make_Observer(Model)
@@ -43,6 +45,7 @@ Location: Type = make_Location(Model)
 Photometer: Type = make_Photometer(Model)
 Observation: Type = make_Observation(Model)
 Measurement: Type = make_Measurement(Model)
+
 
 
 __all__ = [
