@@ -51,7 +51,6 @@ from .constants import (
 # ================
 
 
-
 # ---------------------------------------------
 # Additional conveniente types for enumerations
 # ---------------------------------------------
@@ -145,8 +144,6 @@ PopulationCentreType: Enum = Enum(
 # ------------------
 
 
-
-
 # --------
 # Entities
 # --------
@@ -182,6 +179,7 @@ def make_Date(declarative_base: Type) -> Type:
         year: Mapped[int]
 
         __table_args__ = {"extend_existing": True}  # This is for streamlit only :-(
+
     return Date
 
 
@@ -199,7 +197,9 @@ def make_Time(declarative_base: Type) -> Type:
         day_fraction: Mapped[float]
 
         __table_args__ = {"extend_existing": True}  # This is for streamlit only :-(
+
     return Time
+
 
 def make_Observer(declarative_base: Type) -> Type:
     class Observer(declarative_base):
@@ -228,7 +228,9 @@ def make_Observer(declarative_base: Type) -> Type:
             # Patch enum & date values
             r["type"] = self.type.value
             return r
+
     return Observer
+
 
 def make_Person(observer: Type) -> Type:
     class Person(observer):
@@ -245,8 +247,12 @@ def make_Person(observer: Type) -> Type:
         )
 
         # They are optional because they share table with Organization
-        valid_since: Mapped[datetime] = mapped_column(DateTime, nullable=True, use_existing_column=True)
-        valid_until: Mapped[datetime] = mapped_column(DateTime, nullable=True, use_existing_column=True)
+        valid_since: Mapped[datetime] = mapped_column(
+            DateTime, nullable=True, use_existing_column=True
+        )
+        valid_until: Mapped[datetime] = mapped_column(
+            DateTime, nullable=True, use_existing_column=True
+        )
         valid_state: Mapped[ValidStateType] = mapped_column(
             ValidStateType, nullable=True, use_existing_column=True
         )
@@ -275,7 +281,9 @@ def make_Person(observer: Type) -> Type:
             else:
                 r["affiliation"] = None
             return r
+
     return Person
+
 
 def make_Organization(observer: Type) -> Type:
     class Organization(observer):
@@ -287,7 +295,9 @@ def make_Organization(observer: Type) -> Type:
         # Organization name
         org_name: Mapped[str] = mapped_column(String(255), nullable=True, use_existing_column=True)
         # Organization org_acronym
-        org_acronym: Mapped[str] = mapped_column(String(16), nullable=True, use_existing_column=True)
+        org_acronym: Mapped[str] = mapped_column(
+            String(16), nullable=True, use_existing_column=True
+        )
         # Person/Organization website URL
         org_website_url: Mapped[str] = mapped_column(
             String(255), nullable=True, use_existing_column=True
@@ -308,6 +318,7 @@ def make_Organization(observer: Type) -> Type:
             r["org_website_url"] = self.org_website_url
             r["org_email"] = self.org_email
             return r
+
     return Organization
 
 
@@ -323,7 +334,9 @@ def make_Location(declarative_base: Type) -> Type:
         # Meters above sea level
         masl: Mapped[Optional[float]]
         # Coordinates type
-        coords_meas: Mapped[Optional[CoordinatesType]] = mapped_column(CoordinatesType, nullable=True)
+        coords_meas: Mapped[Optional[CoordinatesType]] = mapped_column(
+            CoordinatesType, nullable=True
+        )
         # Descriptive name of this unitque location
         place: Mapped[str] = mapped_column(String(255), nullable=False)
         # village, town, city, etc name
@@ -370,7 +383,9 @@ def make_Location(declarative_base: Type) -> Type:
                 self.population_centre_type.value if self.population_centre_type else None
             )
             return r
+
     return Location
+
 
 def make_Photometer(declarative_base: Type) -> Type:
     class Photometer(declarative_base):
@@ -411,10 +426,12 @@ def make_Photometer(declarative_base: Type) -> Type:
                 )
             )
             # Patch enum & date values
-            r["model"] = self.value
+            r["model"] = self.model.value
             r["sensor"] = self.sensor.value
             return r
+
     return Photometer
+
 
 def make_Observation(declarative_base: Type) -> Type:
     class Observation(declarative_base):
@@ -487,7 +504,9 @@ def make_Observation(declarative_base: Type) -> Type:
             r["temperature_meas"] = self.temperature_meas.value
             r["humidity_meas"] = self.humidity_meas.value
             return r
+
     return Observation
+
 
 def make_Measurement(declarative_base: Type) -> Type:
     class Measurement(declarative_base):
@@ -565,4 +584,5 @@ def make_Measurement(declarative_base: Type) -> Type:
                     "bat_volt",
                 )
             )
+
     return Measurement

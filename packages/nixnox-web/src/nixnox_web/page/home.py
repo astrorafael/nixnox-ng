@@ -203,3 +203,14 @@ def obs_view_table(conn: SQLConnection) -> None:
             mime="text/csv",
             icon=":material/download:",
         )
+
+
+# ----------------------
+# Start the ball rolling
+# ----------------------
+
+conn = st.connection("env:NX_ENV", type="sql")
+obs_init(conn)
+obs_view_header(conn)
+obs_view_table(conn)
+obs_view_form()

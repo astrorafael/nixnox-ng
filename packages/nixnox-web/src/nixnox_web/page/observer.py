@@ -21,7 +21,7 @@ from pydantic.types import StringConstraints
 # own library
 # -----------
 
-from nixnox_core import ValidState
+from nixnox_dao import ValidState
 from nixnox_core.observer import (
     persons_lookup,
     person_affiliation,
