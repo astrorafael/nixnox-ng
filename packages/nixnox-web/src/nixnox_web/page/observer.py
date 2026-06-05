@@ -83,7 +83,7 @@ class ValidStateField(BaseModel):
 # ----------------
 
 log = logger.get_logger(__name__)
-log.info("ENTERING PAGE")
+log.info("ENTERING OBSERVER PAGE")
 
 conn: SQLConnection = st.connection("env:NX_ENV", type="sql")
 

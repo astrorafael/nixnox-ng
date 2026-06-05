@@ -25,6 +25,8 @@ from nixnox_web.streamlit import ttl
 # ============
 
 log = logger.get_logger(__name__)
+log.info("ENTERING OBSERVATION PAGE")
+
 conn = st.connection("env:NX_ENV", type="sql")
 
 
@@ -34,7 +36,7 @@ def get_observation_details(_session, obs_tag: str):
 
 @st.cache_data(ttl=ttl())
 def get_measurements(_session, obs_tag: str):
-        return db.obs_measurements(_session, obs_tag)
+    return db.obs_measurements(_session, obs_tag)
 
 
 def obs_init(conn: SQLConnection) -> str | None:
@@ -44,6 +46,7 @@ def obs_init(conn: SQLConnection) -> str | None:
         st.warning("### Please, select an observation in the home page", icon="⚠️")
     result = st.session_state["obs_summ"]["selected"][1] if selected else None
     return result
+
 
 def obs_view_details(conn: SQLConnection, obs_tag: str) -> None:
     with conn.session as session:
@@ -86,3 +89,8 @@ def obs_view_details(conn: SQLConnection, obs_tag: str) -> None:
             )
         st.write("## Measurements")
         st.dataframe([m.to_dict() for m in measurements])
+
+
+obs_tag = obs_init(conn)
+if obs_tag:
+    obs_view_details(conn, obs_tag)

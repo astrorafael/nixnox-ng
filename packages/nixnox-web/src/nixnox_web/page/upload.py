@@ -2,6 +2,9 @@
 # Standard library
 # ---------------
 
+import time
+from pathlib import Path
+
 # ---------
 # STREAMLIT
 # ---------
@@ -16,7 +19,15 @@ from streamlit.connections import SQLConnection
 
 import nixnox_core as nx
 
+# ----------------
+# Global variables
+# ----------------
+
 log = streamlit.logger.get_logger(__name__)
+log.info("ENTERING UPLOAD PAGE")
+
+# Database connection
+conn = st.connection("env:NX_ENV", type="sql")
 
 
 def view_upload(conn: SQLConnection):
@@ -34,3 +45,9 @@ def view_upload(conn: SQLConnection):
                 st.error("Error: Invalid file format", icon="🚨")
             else:
                 st.info(f"Observation upload to database: {observation.identifier}", icon="ℹ️")
+                time.sleep(2)
+                del st.session_state.result_table
+                st.switch_page(Path(__file__).parent / "home.py")
+
+
+view_upload(conn)

@@ -29,6 +29,13 @@ from nixnox_core.observation import obs_details, obs_measurements
 
 from nixnox_web.streamlit import ttl
 
+# ----------------
+# Global variables
+# ----------------
+
+log = logger.get_logger(__name__)
+log.info("ENTERING PLOT PAGE")
+
 
 def obs_init(conn: SQLConnection) -> str | None:
     selected = st.session_state["obs_summ"]["selected"]
@@ -114,3 +121,8 @@ def plot_view(conn: SQLConnection, obs_tag: str) -> None:
                 icon=":material/download:",
             )
             st.pyplot(figure)
+
+
+obs_tag = plot_init(conn)
+if obs_tag:
+    plot_view(conn, obs_tag)

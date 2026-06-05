@@ -29,6 +29,7 @@ from nixnox_web.streamlit import ttl
 # ----------------
 
 log = logger.get_logger(__name__)
+log.info("ENTERING HOME PAGE")
 
 obs_default_form = {
     "date": None,
