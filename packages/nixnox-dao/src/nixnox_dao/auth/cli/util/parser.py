@@ -74,7 +74,8 @@ def full() -> ArgumentParser:
 def apk() -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
     parser.add_argument(
-        "-a--api-key",
+        "-k",
+        "--api-key",
         action="store_true",
         default=False,
         help="Regenerate API Key",
