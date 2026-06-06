@@ -10,15 +10,19 @@ except (ImportError, PackageNotFoundError, LookupError):
     __version__ = "0.0.0+dev"
 
 # ---------
-# Reimports
+# Reexports
 # ---------
+
+from nixnox_dao import hash_password
 
 from .ecsv import database_import, database_export, uploader
 
 from .excp import AlreadyExistsError, InconsistentCoordinatesError
 
+
 __all__ = [
     "__version__",
+    "hash_password",
     "database_import",
     "database_export",
     "uploader",
