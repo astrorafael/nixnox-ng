@@ -52,6 +52,7 @@ engine, Session = create_engine_sessionclass(env_var="AUTH_DB_URL")
 
 
 def schema() -> None:
+    log.info("Creating database given by AUTH_DB_URL")
     with engine.begin():
         Model.metadata.drop_all(bind=engine)
         Model.metadata.create_all(bind=engine)

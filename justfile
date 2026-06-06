@@ -37,6 +37,19 @@ env-bak drive=def_drive: (check_mnt drive) (env-backup join(drive, "env", projec
 # Restore .env from storage unit
 env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", project))
 
+# -----------------------
+# Auth Database and tools
+# -----------------------
+
+authnew verbose="":
+    uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
+
+authusers verbose="":
+     uv run nx-auth-admin --console --trace {{ verbose }} create -u admin -p 1234 -r user -f Admin_User
+     uv run nx-auth-admin --console --trace {{ verbose }} create -u fo -p 1234 -r user -f The_Foo_User
+     uv run nx-auth-admin --console --trace {{ verbose }} list --all
+
+
 # Starts a new SQLite database export migration cycle   
 anew verbose="":
     #!/usr/bin/env bash
@@ -44,8 +57,7 @@ anew verbose="":
     uv sync --reinstall
     uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
     uv run nx-auth-populate --console --trace --log-file nixnox.log {{ verbose }}
-    uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
-    uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 50000
+   
 
 # Starts a new SQLD database export migration cycle
 # we need to add 127.0.0.1 *.db.sarna.dev to /etc/local/hosts

@@ -33,6 +33,7 @@ from nixnox_dao import __version__
 from nixnox_dao.auth.noasync import User
 from nixnox_dao.auth.utils import hash_password
 from nixnox_dao.auth.constants import AuthRole
+from .util import parser as prs
 
 # ----------------
 # Module constants
@@ -65,16 +66,14 @@ engine, Session = create_engine_sessionclass(env_var="AUTH_DB_URL")
 def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> None:
     log.info("Creating user %s", args.username)
     with session.begin():
-        user = session.execute(
-            select(User).where(User.username == args.username)
-        ).scalar_one_or_none()
+        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
         if user is not None:
             raise KeyError(f"User {args.username} already exists")
     now = datetime.now(timezone.utc).replace(microsecond=0)
     user = User(
         username=args.username,
         password_hash=hash_password(args.password),
-        full_name=args.fullname,
+        full_name=" ".join(args.full_name.split("_")),
         role=AuthRole.USER,
         api_key=secrets.token_urlsafe(32),
         created_at=now,
@@ -87,9 +86,7 @@ def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> Non
 def cli_delete_user(session: Session, args: Namespace, log: Logger = log) -> None:
     log.info("Deleting user %s", args.username)
     with session.begin():
-        user = session.execute(
-            select(User).where(User.username == args.username)
-        ).scalar_one_or_none()
+        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
         if user is None:
             raise KeyError(f"User {args.username} does not exists")
         session.delete(user)
@@ -98,14 +95,12 @@ def cli_delete_user(session: Session, args: Namespace, log: Logger = log) -> Non
 def cli_update_user(session: Session, args: Namespace, log: Logger = log) -> None:
     log.info("Updating user %s", args.username)
     with session.begin():
-        user = session.execute(
-            select(User).where(User.username == args.username)
-        ).scalar_one_or_none()
+        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
         if user is None:
             raise KeyError(f"User {args.username} does not exists")
         changed = False
         if args.full_name is not None:
-            user.full_name = args.full_name
+            user.full_name = " ".join(args.full_name.split("_"))
             changed = True
         if args.password is not None:
             user.password_hash = hash_password(args.password)
@@ -120,20 +115,58 @@ def cli_update_user(session: Session, args: Namespace, log: Logger = log) -> Non
             user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
 
 
+def cli_list_user(session: Session, args: Namespace, log: Logger = log) -> None:
+    with session.begin():
+        if args.username is not None:
+            log.info("Listing user %s", args.username)
+            q = select(User).where(User.username == args.username)
+            user = session.scalars(q).one_or_none()
+            if user is None:
+                log.info("User %s not found", args.username)
+            else:
+                log.info("%s", user)
+        else:
+            q = select(User)
+            users = session.scalars(q).all()
+            for user in users:
+                log.info("%s", user)
+            log.info("Listing all users")
+
+
 def add_args(parser: ArgumentParser) -> None:
     subparser = parser.add_subparsers(dest="command", required=True)
-    p = subparser.add_parser("create", parents=[], help="Create a new user")
+    p = subparser.add_parser(
+        "create",
+        parents=[prs.uname(), prs.passwd(), prs.role(), prs.full()],
+        help="Create a new user",
+    )
     p.set_defaults(func=cli_create_user)
-    p = subparser.add_parser("update", parents=[], help="Update user attributes")
+    p = subparser.add_parser(
+        "update",
+        parents=[prs.uname(), prs.passwd(), prs.role(), prs.full(), prs.apk()],
+        help="Update user attributes",
+    )
     p.set_defaults(func=cli_update_user)
-    p = subparser.add_parser("delete", parents=[], help="Delete user")
+    p = subparser.add_parser(
+        "delete",
+        parents=[prs.uname()],
+        help="Delete user",
+    )
     p.set_defaults(func=cli_delete_user)
+    p = subparser.add_parser("list", parents=[prs.uname(required=False)], help="Delete user")
+    p.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Regenerate API Key",
+    )
+    p.set_defaults(func=cli_list_user)
 
 
 def cli_main(args: Namespace) -> None:
     sqa_logging(args)
     with Session() as session:
-        args.func(session, args)
+        args.func(session, args, log=log)
     engine.dispose()
 
 

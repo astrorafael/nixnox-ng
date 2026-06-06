@@ -19,26 +19,64 @@ from argparse import ArgumentParser
 # local imports
 # -------------
 
+from nixnox_dao import AuthRole
 
-def uname() -> ArgumentParser:
+
+def uname(required=True) -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
-
-    return parser
-
-
-def role() -> ArgumentParser:
-    parser = ArgumentParser(add_help=False)
-
+    parser.add_argument(
+        "-u",
+        "--username",
+        type=str,
+        required=required,
+        default=None,  # only when required is False
+        help="log-in username",
+    )
     return parser
 
 
 def passwd() -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
+    parser.add_argument(
+        "-p",
+        "--password",
+        type=str,
+        default=None,
+        help="User password",
+    )
+    return parser
 
+
+def role() -> ArgumentParser:
+    parser = ArgumentParser(add_help=False)
+    parser.add_argument(
+        "-r",
+        "--role",
+        type=AuthRole,
+        default=AuthRole.USER,
+        help="User role (default %(default)s)",
+    )
     return parser
 
 
 def full() -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
+    parser.add_argument(
+        "-f",
+        "--full-name",
+        type=str,
+        default=None,
+        help="User full name without spaces, use _ instead (default %(default)s)",
+    )
+    return parser
 
+
+def apk() -> ArgumentParser:
+    parser = ArgumentParser(add_help=False)
+    parser.add_argument(
+        "-a--api-key",
+        action="store_true",
+        default=False,
+        help="Regenerate API Key",
+    )
     return parser

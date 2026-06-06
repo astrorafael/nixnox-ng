@@ -82,4 +82,18 @@ def make_User(declarative_base: Type) -> Type:
         # Last update
         updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
+        def __repr__(self) -> str:
+            return (
+                "User("
+                f"user_id={self.user_id!r}, "
+                f"username={self.username!r}, "
+                f"role={self.role!r}, "
+                f"api_key={self.api_key!r}, "
+                f"full_name={self.full_name!r}, "
+                f"password_hash={self.password_hash!r}, "
+                f"created_at={self.created_at!r}, "
+                f"updated_at={self.updated_at!r}"
+                ")"
+            )
+
     return User
