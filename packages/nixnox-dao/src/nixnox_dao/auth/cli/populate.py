@@ -62,13 +62,15 @@ engine, Session = create_engine_sessionclass(env_var="AUTH_DB_URL")
 
 def cli_populate_user(session: Session, args: Namespace) -> None:
     log.info("Generating default Admin user")
+    now = datetime.now(timezone.utc).replace(microsecond=0)
     user = User(
         username="admin",
         password_hash=hash_password(args.password),
         full_name="Admin User",
         role=AuthRole.ADMIN,
         api_key=secrets.token_urlsafe(32),
-        created_at=datetime.now(timezone.utc).replace(microsecond=0),
+        created_at=now,
+        updated_at=now,
     )
     with session.begin():
         session.add(user)

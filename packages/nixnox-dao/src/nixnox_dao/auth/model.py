@@ -79,5 +79,7 @@ def make_User(declarative_base: Type) -> Type:
         api_key: Mapped[str] = mapped_column(String(64), unique=True)
         # Creation date
         created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+        # Last update
+        updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     return User
