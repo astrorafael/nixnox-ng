@@ -3,14 +3,7 @@
 ## next-generation
 * utilidad local de gestion de usuarios (CRUD)
 
-	* consultar como se hace la actualizacon de una tabla selectivamente las columnas
-		user = session.execute(
-	        select(User).where(User.username == username)
-	    ).scalar_one_or_none()
-		if full_name is not None:
-		        user.full_name = full_name
-		if api_key:
-		   user.api_key = secrets.token_urlsafe(32)
+	* completar el modulo admin con las funciones parser(). ¿como parseamos el full name? ¿con _ ?
 
 * consultar como se añade la api key en una peticon http
 	curl https://api.example.com/endpoint \
