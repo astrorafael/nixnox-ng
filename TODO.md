@@ -15,7 +15,10 @@
 
 * capa nueva nixnox-api con servidor https usando fastapi
 	- No asyncio pq la bd puede ser LibSQL
-	- validacion con pydantic
+	- usar httpx en lugar de requests
+	- validacion con pydantic:
+		- user = db.query(User).first()
+		  return UserResponse.model_validate(user)  # Convierte ORM → Pydantic
 
 ## Antiguo
 * Deployment using docker
