@@ -100,6 +100,13 @@ export:
     set -exuo pipefail
     uv run nx-db-export --console --verbose --trace all --folder export
 
+# ==================== #
+# NIXNOX HTTP API TEST #
+# ==================== #
+
+api:
+    uv run nx-api-server --console --verbose --trace
+
 # ============================== #
 # NIXNOX WEB TEST AND PROTOTYPES #
 # ============================== #
