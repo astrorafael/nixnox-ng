@@ -107,6 +107,9 @@ export:
 api:
     uv run nx-api-server --console --verbose --trace
 
+hello:
+    curl -X GET http://localhost:8086/v1
+   
 # ============================== #
 # NIXNOX WEB TEST AND PROTOTYPES #
 # ============================== #
