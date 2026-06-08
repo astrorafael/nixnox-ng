@@ -64,14 +64,14 @@ engine, Session = create_engine_sessionclass(env_var="AUTH_DB_URL")
 
 
 def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> None:
-    log.info("Creating user %s", args.username)
+    log.info("Creating user %s", args.login)
     with session.begin():
-        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
+        user = session.scalars(select(User).where(User.login == args.login)).one_or_none()
         if user is not None:
-            raise KeyError(f"User {args.username} already exists")
+            raise KeyError(f"User {args.login} already exists")
     now = datetime.now(timezone.utc).replace(microsecond=0)
     user = User(
-        username=args.username,
+        login=args.login,
         password_hash=hash_password(args.password),
         full_name=" ".join(args.full_name.split("_")),
         role=AuthRole.USER,
@@ -84,20 +84,20 @@ def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> Non
 
 
 def cli_delete_user(session: Session, args: Namespace, log: Logger = log) -> None:
-    log.info("Deleting user %s", args.username)
+    log.info("Deleting user %s", args.login)
     with session.begin():
-        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
+        user = session.scalars(select(User).where(User.login == args.login)).one_or_none()
         if user is None:
-            raise KeyError(f"User {args.username} does not exists")
+            raise KeyError(f"User {args.login} does not exists")
         session.delete(user)
 
 
 def cli_update_user(session: Session, args: Namespace, log: Logger = log) -> None:
-    log.info("Updating user %s", args.username)
+    log.info("Updating user %s", args.login)
     with session.begin():
-        user = session.scalars(select(User).where(User.username == args.username)).one_or_none()
+        user = session.scalars(select(User).where(User.login == args.login)).one_or_none()
         if user is None:
-            raise KeyError(f"User {args.username} does not exists")
+            raise KeyError(f"User {args.login} does not exists")
         changed = False
         if args.full_name is not None:
             user.full_name = " ".join(args.full_name.split("_"))
@@ -117,12 +117,12 @@ def cli_update_user(session: Session, args: Namespace, log: Logger = log) -> Non
 
 def cli_list_user(session: Session, args: Namespace, log: Logger = log) -> None:
     with session.begin():
-        if args.username is not None:
-            log.info("Listing user %s", args.username)
-            q = select(User).where(User.username == args.username)
+        if args.login is not None:
+            log.info("Listing user %s", args.login)
+            q = select(User).where(User.login == args.login)
             user = session.scalars(q).one_or_none()
             if user is None:
-                log.info("User %s not found", args.username)
+                log.info("User %s not found", args.login)
             else:
                 log.info("%s", user)
         else:

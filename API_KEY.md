@@ -2,7 +2,7 @@
 
 No la necesitas para autenticar usuarios de tu Streamlit. En tu caso, esa columna api_key solo tendría sentido si quisieras dar a cada usuario una credencial alternativa para llamadas automáticas a una API o para integrar sistemas externos, pero no para login normal.
 
-Para autenticación web de usuarios, lo habitual es guardar solo username, password_hash y quizá role; tras el login, la app crea una sesión en st.session_state o un token de sesión, y eso es lo que se usa para autorizar páginas y acciones. Una API key, en cambio, identifica más bien a una aplicación o integración técnica, suele ser de larga duración y no sustituye bien a una sesión de usuario interactiva.
+Para autenticación web de usuarios, lo habitual es guardar solo login, password_hash y quizá role; tras el login, la app crea una sesión en st.session_state o un token de sesión, y eso es lo que se usa para autorizar páginas y acciones. Una API key, en cambio, identifica más bien a una aplicación o integración técnica, suele ser de larga duración y no sustituye bien a una sesión de usuario interactiva.
 En tu caso
 
 Si tu objetivo es:

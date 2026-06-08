@@ -68,7 +68,7 @@ def make_User(declarative_base: Type) -> Type:
         # User Id
         user_id: Mapped[int] = mapped_column(primary_key=True)
         # login string
-        username: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+        login: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
         # password stoired in hashed form
         password_hash: Mapped[str] = mapped_column(String(512), nullable=False)
         # authentication role
@@ -86,7 +86,7 @@ def make_User(declarative_base: Type) -> Type:
             return (
                 "User("
                 f"user_id={self.user_id!r}, "
-                f"username={self.username!r}, "
+                f"login={self.login!r}, "
                 f"role={self.role!r}, "
                 f"api_key={self.api_key!r}, "
                 f"full_name={self.full_name!r}, "

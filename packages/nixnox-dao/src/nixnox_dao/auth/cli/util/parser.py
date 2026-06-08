@@ -22,11 +22,11 @@ from argparse import ArgumentParser
 from nixnox_dao import AuthRole
 
 
-def uname(required=True) -> ArgumentParser:
+def login(required=True) -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
     parser.add_argument(
-        "-u",
-        "--username",
+        "-l",
+        "--login",
         type=str,
         required=required,
         default=None,  # only when required is False
@@ -66,7 +66,7 @@ def full() -> ArgumentParser:
         "--full-name",
         type=str,
         default=None,
-        help="User full name without spaces, use _ instead (default %(default)s)",
+        help="User full name without spaces, quote or use _ instead (default %(default)s)",
     )
     return parser
 

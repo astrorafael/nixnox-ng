@@ -35,7 +35,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 ############################################################################################
 
 def add_user(
-    username: str, password: str, role: AuthRole = AuthRole.USER, full_name: str = None
+    login: str, password: str, role: AuthRole = AuthRole.USER, full_name: str = None
 ) -> bool:
     """Agregar usuario a la base de datos."""
   
@@ -46,18 +46,18 @@ def add_user(
         if overwrite:
             conn.execute(
                 """
-                INSERT OR REPLACE INTO users (username, password_hash, role, full_name, api_key)
+                INSERT OR REPLACE INTO users (login, password_hash, role, full_name, api_key)
                 VALUES (?, ?, ?, ?, ?)
             """,
-                (username, hash_password(password), role, full_name, api_key),
+                (login, hash_password(password), role, full_name, api_key),
             )
         else:
             conn.execute(
                 """
-                INSERT INTO users (username, password_hash, role, full_name, api_key)
+                INSERT INTO users (login, password_hash, role, full_name, api_key)
                 VALUES (?, ?, ?, ?, ?)
             """,
-                (username, hash_password(password), role, full_name, api_key),
+                (login, hash_password(password), role, full_name, api_key),
             )
         conn.commit()
         return True
@@ -67,10 +67,10 @@ def add_user(
         conn.close()
 
 
-def authenticate_user(username: str, password: str) -> dict | None:
+def authenticate_user(login: str, password: str) -> dict | None:
     """Autenticar usuario y devolver datos si es válido."""
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+    user = conn.execute("SELECT * FROM users WHERE login = ?", (login,)).fetchone()
     conn.close()
 
     if user and verify_password(password, user["password_hash"]):
@@ -95,22 +95,22 @@ def login_ui() -> bool:
         
         if 'logout_requested' in st.session_state:
             st.session_state.pop('user_id', None)
-            st.session_state.pop('username', None)
+            st.session_state.pop('login', None)
             st.session_state.pop('role', None)
             st.session_state.pop('logout_requested', None)
             st.rerun()
         
-        username = st.text_input("Usuario")
+        login = st.text_input("Usuario")
         password = st.text_input("Contraseña", type="password")
         
         if st.button("Iniciar sesión"):
-            user = authenticate_user(username, password)
+            user = authenticate_user(login, password)
             if user:
                 st.session_state['user_id'] = user['id']
-                st.session_state['username'] = user['username']
+                st.session_state['login'] = user['login']
                 st.session_state['role'] = user['role']
                 st.session_state['full_name'] = user['full_name']
-                st.success(f"¡Bienvenido, {user['username']}!")
+                st.success(f"¡Bienvenido, {user['login']}!")
                 st.rerun()
             else:
                 st.error("Usuario o contraseña incorrectos")
@@ -132,7 +132,7 @@ def get_all_users() -> list:
     """Obtener todos los usuarios (solo para admin)."""
     conn = get_db_connection()
     users = conn.execute(
-        'SELECT id, username, role, full_name, created_at FROM users ORDER BY username'
+        'SELECT id, login, role, full_name, created_at FROM users ORDER BY login'
     ).fetchall()
     conn.close()
     return [dict(user) for users]
@@ -189,7 +189,7 @@ if not login_ui():
     st.stop()
 
 # Verificar que esté logueado (cualquier rol)
-st.title(f"📊 Mis Datos - {st.session_state.get('username')}")
+st.title(f"📊 Mis Datos - {st.session_state.get('login')}")
 st.write(f"Rol: **{st.session_state.get('role')}**")
 
 st.divider()
@@ -228,7 +228,7 @@ st.title("⚙️ Admin — Gestión de Usuarios")
 # Crear/actualizar usuario
 st.subheader("➕ Crear / Actualizar Usuario")
 with st.form("create_user"):
-    username = st.text_input("Usuario")
+    login = st.text_input("Usuario")
     password = st.text_input("Contraseña", type="password")
     role = st.selectbox("Rol", ["admin", "user"])
     full_name = st.text_input("Nombre completo (opcional)")
@@ -237,10 +237,10 @@ with st.form("create_user"):
     submitted = st.form_submit_button("Crear / Actualizar usuario")
     
     if submitted:
-        if username and password:
+        if login and password:
             try:
-                if add_user(username, password, role=role, full_name=full_name, overwrite=overwrite):
-                    st.success(f"✅ Usuario {username} guardado como {role}")
+                if add_user(login, password, role=role, full_name=full_name, overwrite=overwrite):
+                    st.success(f"✅ Usuario {login} guardado como {role}")
                 else:
                     st.error("❌ Error: El usuario ya existe")
             except Exception as e:
@@ -254,7 +254,7 @@ st.divider()
 st.subheader("📋 Usuarios existentes")
 conn = sqlite3.connect("users.db")
 df_users = pd.read_sql_query(
-    "SELECT username, role, full_name, created_at FROM users ORDER BY username", 
+    "SELECT login, role, full_name, created_at FROM users ORDER BY login", 
     conn
 )
 conn.close()

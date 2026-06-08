@@ -45,12 +45,12 @@ authnew verbose="":
     uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
 
 authusers verbose="":
-     uv run nx-auth-admin --console --trace {{ verbose }} create -u admin -p 1234 -r user -f Admin_User
-     uv run nx-auth-admin --console --trace {{ verbose }} create -u foo -p 1234 -r user -f The_Foo_User
+     uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r user -f Admin_User
+     uv run nx-auth-admin --console --trace {{ verbose }} create -l foo -p 1234 -r user -f The_Foo_User
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
-     uv run nx-auth-admin --console --trace {{ verbose }} delete -u foo
-     uv run nx-auth-admin --console --trace {{ verbose }} list -u admin
-     uv run nx-auth-admin --console --trace {{ verbose }} update -u admin -k -r admin -f Admin_User
+     uv run nx-auth-admin --console --trace {{ verbose }} delete -l foo
+     uv run nx-auth-admin --console --trace {{ verbose }} list -l admin
+     uv run nx-auth-admin --console --trace {{ verbose }} update -l admin -k -r admin -f Admin_User
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
 
 
@@ -63,8 +63,8 @@ anew verbose="":
     #!/usr/bin/env bash
     set -exuo pipefail
     uv sync --reinstall
-    uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
-    uv run nx-auth-populate --console --trace --log-file nixnox.log {{ verbose }}
+    uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
+    uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 25000
    
 
 # Starts a new SQLD database export migration cycle
