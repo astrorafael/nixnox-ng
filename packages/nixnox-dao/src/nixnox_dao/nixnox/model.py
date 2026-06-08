@@ -44,6 +44,22 @@ from .constants import (
     Coordinates,
     Timestamp,
     PopulationCentre,
+    NAME_LEN,
+    NICK_LEN,
+    EMAIL_LEN,
+    PLACE_LEN,
+    POPUCEN_LEN,
+    SUBREG_LEN,
+    REGION_LEN,
+    COUNTRY_LEN,
+    TZONE_LEN,
+    PHOT_NAME,
+    COMMENT_LEN,
+    IDENT_LEN,
+    DIGEST_LEN,
+    WEATHER_LEN,
+    URL_LEN,
+    OTHEROBS_LEN,
 )
 
 # ================
@@ -238,9 +254,11 @@ def make_Person(observer: Type) -> Type:
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
         # Person full name
-        name: Mapped[str] = mapped_column(String(255), nullable=True, use_existing_column=True)
+        name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=True, use_existing_column=True)
         # Observer nickname for individuals, optional as it shares data with Organization
-        nickname: Mapped[str] = mapped_column(String(12), nullable=True, use_existing_column=True)
+        nickname: Mapped[str] = mapped_column(
+            String(NICK_LEN), nullable=True, use_existing_column=True
+        )
         # Observer (individual) affiliation to an organization name
         affiliation_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), nullable=True, use_existing_column=True
@@ -293,7 +311,9 @@ def make_Organization(observer: Type) -> Type:
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
         # Organization name
-        org_name: Mapped[str] = mapped_column(String(255), nullable=True, use_existing_column=True)
+        org_name: Mapped[str] = mapped_column(
+            String(URL_LEN), nullable=True, use_existing_column=True
+        )
         # Organization org_acronym
         org_acronym: Mapped[str] = mapped_column(
             String(16), nullable=True, use_existing_column=True
@@ -303,7 +323,9 @@ def make_Organization(observer: Type) -> Type:
             String(255), nullable=True, use_existing_column=True
         )
         # Person/Organization contact org_email
-        org_email: Mapped[str] = mapped_column(String(64), nullable=True, use_existing_column=True)
+        org_email: Mapped[str] = mapped_column(
+            String(EMAIL_LEN), nullable=True, use_existing_column=True
+        )
         # Version control attributes for Persons that change affiliations
 
         __mapper_args__ = {
@@ -338,18 +360,18 @@ def make_Location(declarative_base: Type) -> Type:
             CoordinatesType, nullable=True
         )
         # Descriptive name of this unitque location
-        place: Mapped[str] = mapped_column(String(255), nullable=False)
+        place: Mapped[str] = mapped_column(String(PLACE_LEN), nullable=False)
         # village, town, city, etc name
-        population_centre: Mapped[str] = mapped_column(String(255), nullable=False)
+        population_centre: Mapped[str] = mapped_column(String(POPUCEN_LEN), nullable=False)
         population_centre_type: Mapped[Optional[PopulationCentreType]] = mapped_column(
             PopulationCentreType, nullable=True
         )
         # province, county, etc..
-        sub_region: Mapped[str] = mapped_column(String(255), nullable=False)
+        sub_region: Mapped[str] = mapped_column(String(SUBREG_LEN), nullable=False)
         # federal state, comunidad autonomica, etc..
-        region: Mapped[str] = mapped_column(String(255), nullable=False)
-        country: Mapped[str] = mapped_column(String(64), nullable=False)
-        timezone: Mapped[str] = mapped_column(String(64), nullable=False)
+        region: Mapped[str] = mapped_column(String(REGION_LEN), nullable=False)
+        country: Mapped[str] = mapped_column(String(COUNTRY_LEN), nullable=False)
+        timezone: Mapped[str] = mapped_column(String(TZONE_LEN), nullable=False)
 
         __table_args__ = (
             UniqueConstraint("longitude", "latitude"),
@@ -395,7 +417,7 @@ def make_Photometer(declarative_base: Type) -> Type:
         # Either TAS or SQM
         model: Mapped[PhotometerModel] = mapped_column(PhotometerModelCol)
         # Photometer name
-        name: Mapped[str] = mapped_column(String(10))
+        name: Mapped[str] = mapped_column(String(PHOT_NAME))
         # Photometer sensor model
         sensor: Mapped[SensorType] = mapped_column(SensorType, default=Sensor.TSL237)
         # Field of view in degrees
@@ -403,7 +425,7 @@ def make_Photometer(declarative_base: Type) -> Type:
         # Photometer Zero Point (TAS only)
         zero_point: Mapped[Optional[float]]  # Zero Point id known (i.e. TAS)
         # Photometer level comment
-        comment: Mapped[Optional[str]] = mapped_column(String(255))
+        comment: Mapped[Optional[str]] = mapped_column(String(COMMENT_LEN))
 
         __table_args__ = (
             UniqueConstraint(model, name),
@@ -439,9 +461,9 @@ def make_Observation(declarative_base: Type) -> Type:
 
         obs_id: Mapped[int] = mapped_column(primary_key=True)
         # Identifier is the original filename, without path or extension
-        identifier: Mapped[str] = mapped_column(String(128), unique=True)
+        identifier: Mapped[str] = mapped_column(String(IDENT_LEN), unique=True)
         # MD5 File digest to avoid duplicates
-        digest: Mapped[str] = mapped_column(String(64), unique=True)
+        digest: Mapped[str] = mapped_column(String(DIGEST_LEN), unique=True)
         # Temperature in Celsius, see temperature_meas for meaning
         temperature_1: Mapped[Optional[float]]
         # Temperature in Celsius, see temperature_meas for meaning
@@ -461,13 +483,13 @@ def make_Observation(declarative_base: Type) -> Type:
         # Timestamp measurement type
         timestamp_meas: Mapped[TimestampType] = mapped_column(TimestampType, nullable=False)
         # Weather conditions in free text form
-        weather_conditions: Mapped[Optional[str]] = mapped_column(String(255))
+        weather_conditions: Mapped[Optional[str]] = mapped_column(String(WEATHER_LEN))
         # Additional comments
-        comment: Mapped[Optional[str]] = mapped_column(String(255))
+        comment: Mapped[Optional[str]] = mapped_column(String(COMMENT_LEN))
         # Other observers list (comma separated)
-        other_observers: Mapped[Optional[str]] = mapped_column(String(255))
+        other_observers: Mapped[Optional[str]] = mapped_column(String(OTHEROBS_LEN))
         # Site image URL
-        image_url: Mapped[Optional[str]] = mapped_column(String(255))
+        image_url: Mapped[Optional[str]] = mapped_column(String(URL_LEN))
 
         # These are relationship attributes
         # These are not real columns, part of the ORM magic

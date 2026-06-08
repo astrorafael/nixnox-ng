@@ -31,7 +31,7 @@ from lica.sqlalchemy.metadata import metadata
 # Own modules
 # -----------
 
-from .constants import AuthRole
+from .constants import AuthRole, LOGIN_LEN, HASH_LEN, NAME_LEN, APIKEY_LEN
 
 # ================
 # Module constants
@@ -68,15 +68,15 @@ def make_User(declarative_base: Type) -> Type:
         # User Id
         user_id: Mapped[int] = mapped_column(primary_key=True)
         # login string
-        login: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+        login: Mapped[str] = mapped_column(String(LOGIN_LEN), nullable=False, unique=True)
         # password stoired in hashed form
-        password_hash: Mapped[str] = mapped_column(String(512), nullable=False)
+        password_hash: Mapped[str] = mapped_column(String(HASH_LEN), nullable=False)
         # authentication role
         role: Mapped[AuthRole] = mapped_column(RoleCol, nullable=False)
         # User full name
-        full_name: Mapped[str] = mapped_column(String(128), nullable=False)
+        full_name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=False)
         # URL-safe, 32 bytes base64 encoded API Key
-        api_key: Mapped[str] = mapped_column(String(64), unique=True)
+        api_key: Mapped[str] = mapped_column(String(APIKEY_LEN), unique=True)
         # Creation date
         created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
         # Last update

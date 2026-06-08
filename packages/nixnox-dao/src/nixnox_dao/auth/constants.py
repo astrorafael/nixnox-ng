@@ -12,6 +12,13 @@
 
 from enum import StrEnum
 
+# column lengths
+
+LOGIN_LEN = 32
+HASH_LEN = 512
+NAME_LEN = 255
+APIKEY_LEN = 64
+
 
 # Authentication Roles
 
