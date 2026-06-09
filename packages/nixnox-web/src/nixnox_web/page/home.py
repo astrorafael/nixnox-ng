@@ -14,7 +14,7 @@ import streamlit as st
 from streamlit.connections import SQLConnection
 from streamlit import logger
 from nixnox_dao import ObserverType, PhotometerModel
-import nixnox_core.observation as db
+import nixnox_core.noasync.observation as db
 
 # -------------
 # Own libraries

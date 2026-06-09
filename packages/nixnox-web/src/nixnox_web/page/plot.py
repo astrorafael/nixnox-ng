@@ -21,7 +21,7 @@ from streamlit import logger
 from astropy.table import Table
 
 import nixnox_core.mpl as mpl
-from nixnox_core.observation import obs_details, obs_measurements
+from nixnox_core.noasync.observation import obs_details, obs_measurements
 
 # -------------
 # Own libraries

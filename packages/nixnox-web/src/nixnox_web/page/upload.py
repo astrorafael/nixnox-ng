@@ -18,6 +18,7 @@ from streamlit.connections import SQLConnection
 # ---------------
 
 import nixnox_core as nx
+from nixnox_core.noasync.ecsv import uploader
 
 # ----------------
 # Global variables
@@ -36,7 +37,7 @@ def view_upload(conn: SQLConnection):
     if data:
         with conn.session as session:
             try:
-                observation = nx.uploader(session, data, log=log)
+                observation = uploader(session, data, log=log)
             except nx.AlreadyExistsError as e:
                 observation = e.args[0]
                 st.error("Error: observation already exists in the database", icon="🚨")

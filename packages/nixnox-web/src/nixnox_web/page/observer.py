@@ -22,7 +22,7 @@ from pydantic.types import StringConstraints
 # -----------
 
 from nixnox_dao import ValidState
-from nixnox_core.observer import (
+from nixnox_core.noasync.observer import (
     persons_lookup,
     person_affiliation,
     person_update,
