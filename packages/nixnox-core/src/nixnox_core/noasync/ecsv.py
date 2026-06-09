@@ -31,7 +31,7 @@ from astropy.table import Table
 # -------------
 
 from nixnox_dao import PhotometerModel
-from nixnox_dao.noasync import Observation, Person
+from nixnox_dao.nixnox.noasync import Observation, Person
 
 from .tas import TASLoader, TASExporter, TASImporter
 #from .sqm import SQMLoader

@@ -21,7 +21,7 @@ from sqlalchemy import select, asc, label
 from sqlalchemy.orm import aliased
 
 from nixnox_dao import ValidState
-from nixnox_dao.noasync import Person, Organization
+from nixnox_dao.nixnox.noasync import Person, Organization
 
 # -----------------------
 # Module global variables

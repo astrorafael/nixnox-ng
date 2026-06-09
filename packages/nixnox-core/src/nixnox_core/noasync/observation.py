@@ -21,14 +21,14 @@ from sqlalchemy import select, func, desc, label
 from sqlalchemy import Row
 
 from nixnox_dao import PhotometerModel, ObserverType
-from nixnox_dao.noasync import (
+from nixnox_dao.nixnox.noasync import (
     Photometer,
     Observer,
     Person,
     Organization,
     Observation,
     Location,
-    Measurement,
+    Measurement
 )
 
 # -------------

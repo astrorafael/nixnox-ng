@@ -13,6 +13,7 @@ except (ImportError, PackageNotFoundError, LookupError):
 # Reimports
 # ---------
 
+from .auth.utils import hash_password
 
 from .nixnox.constants import (
     ObserverType,
@@ -37,12 +38,13 @@ from .nixnox.constants import (
     DIGEST_LEN,
     WEATHER_LEN,
     URL_LEN,
-    OTHEROBS_LEN
+    OTHEROBS_LEN,
 )
 from .auth.constants import AuthRole, LOGIN_LEN, HASH_LEN, NAME_LEN, APIKEY_LEN
 
 __all__ = [
     "__version__",
+    "hash_password",
     "ObserverType",
     "ValidState",
     "PhotometerModel",

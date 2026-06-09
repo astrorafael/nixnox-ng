@@ -39,7 +39,7 @@ from nixnox_dao import (
     ValidState,
 )
 
-from nixnox_dao.noasync import (
+from nixnox_dao.nixnox.noasync import (
     Photometer,
     Observer,
     Organization,
@@ -53,10 +53,10 @@ from nixnox_dao.noasync import (
 # local imports
 # -------------
 
-from .location import geolocate, distance
+from ..location import geolocate, distance
 
 
-from .excp import AlreadyExistsError, InconsistentCoordinatesError
+from ..excp import AlreadyExistsError, InconsistentCoordinatesError
 
 # ----------------
 # Module constants
@@ -165,7 +165,6 @@ class TASLoader:
             organization = Organization(org_name=affiliation)
         return organization
 
-
     def observer(self) -> Observer:
         # we need to discreiminate between persons & organizations here
         # but for the time nbeing they are all persons
@@ -174,11 +173,11 @@ class TASLoader:
         individual = self.session.scalars(q).one_or_none()
         if not individual:
             individual = Person(
-            name=self.table.meta["keywords"]["author"],
-            valid_since=datetime.now(timezone.utc).replace(microsecond=0),
-            valid_until=datetime(year=2099, month=12, day=31, tzinfo=timezone.utc),
-            valid_state=ValidState.CURRENT,
-        )
+                name=self.table.meta["keywords"]["author"],
+                valid_since=datetime.now(timezone.utc).replace(microsecond=0),
+                valid_until=datetime(year=2099, month=12, day=31, tzinfo=timezone.utc),
+                valid_state=ValidState.CURRENT,
+            )
         return individual
 
     def measurements(
@@ -248,7 +247,9 @@ class TASLoader:
         longitudes = np.sort(self.table["Long"])
         latitudes = np.sort(self.table["Long"])
         error_box = distance((longitudes[0], latitudes[0]), (longitudes[-1], latitudes[-1]))
-        self.log.info("Checking geographical coordinates reliability. Error box is %.0f m.", error_box)
+        self.log.info(
+            "Checking geographical coordinates reliability. Error box is %.0f m.", error_box
+        )
         if error_box > threshold:
             raise InconsistentCoordinatesError(f"Error box: {error_box} > {threshold}")
 
@@ -331,14 +332,12 @@ class TASImporter:
         if obs_type == ObserverType.PERSON and over_dict["affiliation"]:
             affil = over_dict["affiliation"]
             result = Organization(
-                    org_name=affil["org_name"],
-                    org_acronym=affil["org_acronym"],
-                    org_email=affil["org_acronym"],
-                    org_website_url=affil["org_website_url"],
-                )
+                org_name=affil["org_name"],
+                org_acronym=affil["org_acronym"],
+                org_email=affil["org_acronym"],
+                org_website_url=affil["org_website_url"],
+            )
         return result
-
-
 
     def observer(self) -> Observer:
         over_dict = self.table.meta["Observer"]
@@ -354,7 +353,7 @@ class TASImporter:
                     valid_since=datetime.strptime(over_dict["valid_since"], "%Y-%m-%dT%H:%M:%S"),
                     valid_until=datetime.strptime(over_dict["valid_until"], "%Y-%m-%dT%H:%M:%S"),
                     valid_state=ValidState(over_dict["valid_state"]),
-                    )
+                )
         else:
             q = select(Organization).where(Organization.org_name == name)
             result = self.session.scalars(q).one_or_none()
@@ -366,7 +365,6 @@ class TASImporter:
                     org_website_url=over_dict["org_website_url"],
                 )
         return result
-            
 
     def measurements(
         self,

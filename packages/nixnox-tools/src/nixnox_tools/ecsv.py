@@ -29,7 +29,8 @@ from lica.cli import execute
 from . import __version__
 from .util import parser as prs
 
-from nixnox_core import uploader, database_import, database_export, AlreadyExistsError
+from nixnox_core import AlreadyExistsError
+from nixnox_core.noasync.ecsv import uploader, database_import, database_export
 
 # ----------------
 # Module constants
