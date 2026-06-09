@@ -29,7 +29,6 @@ import matplotlib.colors as mcolors
 
 # Type annotations
 from matplotlib.figure import Figure
-from matplotlib.axes import Axes
 from matplotlib.colors import LinearSegmentedColormap
 
 # from streamlit.logger import get_logger
@@ -40,10 +39,11 @@ from .observer import observer_name
 # Global variables
 # ----------------
 
-#log = get_logger(__name__)
+# log = get_logger(__name__)
 
 # get the root logger
 log = logging.getLogger(__name__.split(".")[-1])
+
 
 class Magnitude(float, Enum):
     SUPER_BRIGHT = 8.0
@@ -111,10 +111,10 @@ def plot_add_metadata(
     fig: Figure, observation: dict, observer: dict, location: dict, photometer: dict
 ) -> None:
     latitude = Angle(location["latitude"] * u.deg).to_string(
-        precision=0, alwayssign=True,  format="latex_inline"
+        precision=0, alwayssign=True, format="latex_inline"
     )
     longitude = Angle(location["longitude"] * u.deg).to_string(
-        precision=0, alwayssign=True,  format="latex_inline"
+        precision=0, alwayssign=True, format="latex_inline"
     )
     fig.text(0.90, 0.28, f"{observation['timestamp_1']}Z", size=14, ha="right")
     fig.text(0.90, 0.26, f"Photometer: {photometer['name']}", size=14, ha="right")
