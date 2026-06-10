@@ -63,7 +63,7 @@ def obs_summary_search(session, cond: dict = None) -> Sequence[Any]:
             Photometer.name.label("photometer"),
             label(
                 "observer",
-                Person.name if over_type == ObserverType.PERSON else Organization.org_name,
+                Person.name if over_type == ObserverType.PERSON else Organization.name,
             ),
         )
         .select_from(Measurement)
@@ -93,7 +93,7 @@ def obs_summary_search(session, cond: dict = None) -> Sequence[Any]:
                 )
             else:
                 q = q.where(
-                    Organization.org_name.like("%" + cond["search_by_observer_name"] + "%"),
+                    Organization.name.like("%" + cond["search_by_observer_name"] + "%"),
                 )
         # Add Location conditions if any
         if cond["search_by_location_name"] and cond["search_by_location_scope"] == "Country":

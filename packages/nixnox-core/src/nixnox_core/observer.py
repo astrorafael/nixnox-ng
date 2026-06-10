@@ -21,7 +21,7 @@ def observer_name(observer: dict) -> str:
     if ObserverType(observer["type"]) == ObserverType.PERSON:
         name = observer["name"]
         if observer["affiliation"] is not None:
-            long_affil = observer["affiliation"]["org_name"]
+            long_affil = observer["affiliation"]["name"]
             short_affil = (
                 observer["affiliation"]["org_acronym"]
                 if observer["affiliation"]["org_acronym"] is not None
@@ -32,6 +32,6 @@ def observer_name(observer: dict) -> str:
         else:
             result = name
     else:
-        name = observer["org_name"]
+        name = observer["name"]
         result = f"{name} ({observer['org_acronym']})" if observer["org_acronym"] else name
     return result

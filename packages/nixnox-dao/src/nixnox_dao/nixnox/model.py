@@ -225,6 +225,16 @@ def make_Observer(declarative_base: Type) -> Type:
         # Either Indiviudal or Organization
         type: Mapped[ObserverType] = mapped_column(ObserverCol, nullable=False)
 
+        # Person / Organization full name
+        name: Mapped[str] = mapped_column(
+            String(NAME_LEN), nullable=False, use_existing_column=True
+        )
+
+        # Person / Organization nickname
+        nickname: Mapped[str] = mapped_column(
+            String(NICK_LEN), nullable=True, use_existing_column=True
+        )
+
         # We can't set an UniqueConstraint on name, valid_since because this applies
         # only to Persons
         __table_args__ = (
@@ -243,6 +253,8 @@ def make_Observer(declarative_base: Type) -> Type:
             r = OrderedDict((key, self.__dict__.get(key)) for key in ("type",))
             # Patch enum & date values
             r["type"] = self.type.value
+            r["name"] = self.name
+            r["nickname"] = self.nickname
             return r
 
     return Observer
@@ -253,12 +265,7 @@ def make_Person(observer: Type) -> Type:
         observer_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
-        # Person full name
-        name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=True, use_existing_column=True)
-        # Observer nickname for individuals, optional as it shares data with Organization
-        nickname: Mapped[str] = mapped_column(
-            String(NICK_LEN), nullable=True, use_existing_column=True
-        )
+        
         # Observer (individual) affiliation to an organization name
         affiliation_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), nullable=True, use_existing_column=True
@@ -289,8 +296,6 @@ def make_Person(observer: Type) -> Type:
 
         def to_dict(self) -> OrderedDict:
             r = super().to_dict()
-            r["name"] = self.name
-            r["nickname"] = self.nickname
             r["valid_since"] = self.valid_since.isoformat()
             r["valid_until"] = self.valid_until.isoformat()
             r["valid_state"] = self.valid_state.value
@@ -310,10 +315,7 @@ def make_Organization(observer: Type) -> Type:
         observer_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
-        # Organization name
-        org_name: Mapped[str] = mapped_column(
-            String(URL_LEN), nullable=True, use_existing_column=True
-        )
+        
         # Organization org_acronym
         org_acronym: Mapped[str] = mapped_column(
             String(16), nullable=True, use_existing_column=True
@@ -326,7 +328,6 @@ def make_Organization(observer: Type) -> Type:
         org_email: Mapped[str] = mapped_column(
             String(EMAIL_LEN), nullable=True, use_existing_column=True
         )
-        # Version control attributes for Persons that change affiliations
 
         __mapper_args__ = {
             "polymorphic_identity": ObserverType.ORG,
@@ -335,7 +336,7 @@ def make_Organization(observer: Type) -> Type:
         def to_dict(self) -> OrderedDict:
             """To be written as Astropy's table metadata"""
             r = super().to_dict()
-            r["org_name"] = self.org_name
+            r["name"] = self.name
             r["org_acronym"] = self.org_acronym
             r["org_website_url"] = self.org_website_url
             r["org_email"] = self.org_email

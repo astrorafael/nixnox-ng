@@ -40,7 +40,7 @@ def persons_lookup(session):
             Person.observer_id.label("id"),
             Person.name,
             Person.nickname,
-            OrgAlias.org_name.label("affiliation"),
+            OrgAlias.name.label("affiliation"),
             Person.valid_state,
             Person.valid_since,
             Person.valid_until,
@@ -73,7 +73,7 @@ def person_affiliation(session: Any, observer_id: int) -> Optional[str]:
     person = session.scalars(q).one_or_none()
     if not person or not person.affiliation:
         return None
-    return person.affiliation.org_name
+    return person.affiliation.name
 
 
 def person_delete(session: Any, observer_id: int) -> None:
@@ -94,7 +94,7 @@ def person_clone(
     valid_state: ValidState,
 ) -> None:
     with session.begin():
-        qo = select(Organization.observer_id).where(Organization.org_name == affiliation)
+        qo = select(Organization.observer_id).where(Organization.name == affiliation)
         affiliation_id = session.scalars(qo).one_or_none()
         person = Person(
             name=name,
@@ -119,7 +119,7 @@ def person_update(
 ) -> None:
     with session.begin():
         qp = select(Person).where(Person.observer_id == observer_id)
-        qo = select(Organization).where(Organization.org_name == affiliation)
+        qo = select(Organization).where(Organization.name == affiliation)
         org = session.scalars(qo).one_or_none()
         person = session.scalars(qp).one_or_none()
         # new person ?
@@ -143,25 +143,25 @@ def person_update(
 
 
 def orgs_names_lookup(session):
-    q = select(Organization.org_name).order_by(asc(Organization.org_name))
+    q = select(Organization.name).order_by(asc(Organization.name))
     return session.scalars(q).all()
 
 
 def orgs_lookup(session):
     q = select(
-        Organization.org_name,
+        Organization.name,
         Organization.org_acronym,
         Organization.org_website_url,
         Organization.org_email,
-    ).order_by(asc(Organization.org_name))
+    ).order_by(asc(Organization.name))
     return session.execute(q).all()
 
 
 def org_update(
-    session: Any, org_name: str, org_acronym: str, org_website_url: str, org_email: str
+    session: Any, name: str, org_acronym: str, org_website_url: str, org_email: str
 ) -> None:
     with session.begin():
-        q = select(Organization).where(Organization.org_name == org_name)
+        q = select(Organization).where(Organization.name == name)
         organization = session.scalars(q).one_or_none()
         log.info("ORGANIZATION %s", organization)
         if organization:
@@ -171,7 +171,7 @@ def org_update(
             log.info("YA EXISTE Y LA MODIFICAMOS A %s", organization)
         else:
             organization = Organization(
-                org_name=org_name,
+                name=name,
                 org_acronym=org_acronym,
                 org_website_url=org_website_url,
                 org_email=org_email,
@@ -181,7 +181,7 @@ def org_update(
 
 def org_delete(session: Any, name: str) -> None:
     with session.begin():
-        q = select(Organization).where(Organization.org_name == name)
+        q = select(Organization).where(Organization.name == name)
         organization = session.scalars(q).one_or_none()
         if organization:
             session.delete(organization)

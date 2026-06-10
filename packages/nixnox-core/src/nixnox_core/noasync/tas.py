@@ -159,10 +159,10 @@ class TASLoader:
         affiliation = self.table.meta["keywords"].get("association")
         if not affiliation:
             return None
-        q = select(Organization).where(Organization.org_name == affiliation)
+        q = select(Organization).where(Organization.name == affiliation)
         organization = self.session.scalars(q).one_or_none()
         if not organization:
-            organization = Organization(org_name=affiliation)
+            organization = Organization(name=affiliation)
         return organization
 
     def observer(self) -> Observer:
@@ -332,7 +332,7 @@ class TASImporter:
         if obs_type == ObserverType.PERSON and over_dict["affiliation"]:
             affil = over_dict["affiliation"]
             result = Organization(
-                org_name=affil["org_name"],
+                name=affil["name"],
                 org_acronym=affil["org_acronym"],
                 org_email=affil["org_acronym"],
                 org_website_url=affil["org_website_url"],
@@ -355,11 +355,11 @@ class TASImporter:
                     valid_state=ValidState(over_dict["valid_state"]),
                 )
         else:
-            q = select(Organization).where(Organization.org_name == name)
+            q = select(Organization).where(Organization.name == name)
             result = self.session.scalars(q).one_or_none()
             if not result:
                 result = Organization(
-                    org_name=name,
+                    name=name,
                     org_acronym=over_dict["org_acronym"],
                     org_email=over_dict["org_acronym"],
                     org_website_url=over_dict["org_website_url"],
