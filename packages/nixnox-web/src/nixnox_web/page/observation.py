@@ -34,7 +34,8 @@ def get_observation_details(_session, obs_tag: str):
     return db.obs_details(_session, obs_tag)
 
 
-@st.cache_data(ttl=ttl())
+# use cache_resource instead of cache_data because dynamic DAO Measurements cannot be pickled
+@st.cache_resource(ttl=ttl())
 def get_measurements(_session, obs_tag: str):
     return db.obs_measurements(_session, obs_tag)
 

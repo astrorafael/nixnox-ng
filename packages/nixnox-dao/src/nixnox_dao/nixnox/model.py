@@ -226,14 +226,11 @@ def make_Observer(declarative_base: Type) -> Type:
         type: Mapped[ObserverType] = mapped_column(ObserverCol, nullable=False)
 
         # Person / Organization full name
-        name: Mapped[str] = mapped_column(
-            String(NAME_LEN), nullable=False, use_existing_column=True
+        name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=False
         )
 
         # Person / Organization nickname
-        nickname: Mapped[str] = mapped_column(
-            String(NICK_LEN), nullable=True, use_existing_column=True
-        )
+        nickname: Mapped[str] = mapped_column(String(NICK_LEN), nullable=True)
 
         # We can't set an UniqueConstraint on name, valid_since because this applies
         # only to Persons
