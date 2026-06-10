@@ -336,7 +336,6 @@ def make_Organization(observer: Type) -> Type:
         def to_dict(self) -> OrderedDict:
             """To be written as Astropy's table metadata"""
             r = super().to_dict()
-            r["name"] = self.name
             r["org_acronym"] = self.org_acronym
             r["org_website_url"] = self.org_website_url
             r["org_email"] = self.org_email
