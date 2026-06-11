@@ -44,7 +44,7 @@ env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", proje
 # New Auth database
 authnew verbose="":
     uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
-    uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r admin -f "Admin User"
+    #uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r admin -f "Admin User"
 
 # Populate auth database
 authusers verbose="":
@@ -128,6 +128,18 @@ sqld target="debug":
     set -exuo pipefail
     SQLD_NODE=primary ./sqld-{{target}} --db-path ../data.sqld --no-welcome --disable-metrics \
     --admin-listen-addr 127.0.0.1:8082 --enable-namespaces
+
+
+# =============
+# PyTest driver
+# =============
+
+test pkg async module:
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/{{async}}/test_{{module}}.py
+
+testf pkg async module func:
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/{{async}}/test_{{module}}.py::test_{{func}}
+
 
 # =======================================================================
 

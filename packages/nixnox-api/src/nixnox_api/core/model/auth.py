@@ -10,6 +10,7 @@
 # ----------------
 
 import re
+import hashlib
 from typing import Annotated, Optional
 
 # ---------------------
@@ -21,7 +22,25 @@ from pydantic import (
     ValidationError,
     AfterValidator,
 )
-from nixnox_dao import AuthRole, NAME_LEN, NICK_LEN, PASSWD_LEN, APIKEY_LEN
+from nixnox_dao import AuthRole, NAME_LEN, NICK_LEN, APIKEY_LEN
+
+# ---------
+# Constants
+# ---------
+
+PASSWD_LEN = 32
+
+# ------------------
+# Auxiliar functions
+# ------------------
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verifica contraseña contra hash almacenado."""
+    salt, stored_hash = password_hash.split("$")
+    new_hash = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100000).hex()
+    return new_hash == stored_hash
+
 
 # --------------------
 # Pydantic annotations

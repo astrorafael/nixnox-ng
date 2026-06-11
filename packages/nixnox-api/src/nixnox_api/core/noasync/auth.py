@@ -10,10 +10,9 @@
 # ----------------
 
 import logging
-import hashlib
 import secrets
 from datetime import datetime, timezone
-from typing import Any, Tuple
+from typing import Any, Tuple, Dict
 
 # ---------------------
 # Third party libraries
@@ -29,12 +28,13 @@ from nixnox_dao.auth.utils import hash_password
 # -----------
 
 from ..model.auth import (
+    verify_password,
     ApiKey,
     UserCreateInfo,
     UserModifyInfo,
     UserDeleteInfo,
     UserAuthenticateInfo,
-    UserLookupByApiKey,
+    UserLookupApiKey,
 )
 
 # -----------------------
@@ -43,20 +43,10 @@ from ..model.auth import (
 
 log = logging.getLogger(__name__.split(".")[-1])
 
-# ------------------
-# Auxiliar functions
-# ------------------
-
-
-def verify_password(password: str, password_hash: str) -> bool:
-    """Verifica contraseña contra hash almacenado."""
-    salt, stored_hash = password_hash.split("$")
-    new_hash = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100000).hex()
-    return new_hash == stored_hash
-
 
 # Session must point to the auth database
-def create_user(session: Any, info: UserCreateInfo) -> None:
+def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | None:
+    log.info("Creating user %s", info.login)
     with session.begin():
         user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
         if user is not None:
@@ -73,6 +63,7 @@ def create_user(session: Any, info: UserCreateInfo) -> None:
     )
     with session.begin():
         session.add(user)
+        return user.to_dict()
 
 
 def modify_user(session: Any, info: UserModifyInfo) -> None:
@@ -117,7 +108,7 @@ def authenticate_user(session: Any, info: UserAuthenticateInfo) -> Tuple[bool, A
         return False, None
 
 
-def get_user_by_api_key(session: Any, info: UserLookupByApiKey) -> dict | None:
+def get_user_by_api_key(session: Any, info: UserLookupApiKey) -> Dict[str, Any] | None:
     with session.begin():
         user = session.scalars(select(User).where(User.api_key == info.api_key)).one_or_none()
         return user.to_dict() if user else None
