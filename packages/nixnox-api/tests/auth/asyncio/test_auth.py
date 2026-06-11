@@ -17,7 +17,7 @@ from nixnox_api.core.asyncio.auth import (
 from . import engine, Session
 from ... import DbSize, copy_file
 
-# Log
+
 log = logging.getLogger(__name__.split(".")[-1])
 
 

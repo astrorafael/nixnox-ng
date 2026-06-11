@@ -108,7 +108,3 @@ class UserDeleteInfo(BaseModel):
 class UserAuthenticateInfo(BaseModel):
     login: NickName
     password: Password
-
-
-class UserLookupApiKey(BaseModel):
-    apikey: ApiKey

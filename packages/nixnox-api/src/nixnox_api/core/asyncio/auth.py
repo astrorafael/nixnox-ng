@@ -34,7 +34,7 @@ from ..model.auth import (
     UserModifyInfo,
     UserDeleteInfo,
     UserAuthenticateInfo,
-    UserLookupApiKey,
+    NickName,
 )
 
 # -----------------------
@@ -45,7 +45,7 @@ log = logging.getLogger(__name__.split(".")[-1])
 
 
 # Session must point to the auth database
-async def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | None:
+async def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any]:
     log.info("Creating user %s", info.login)
     user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user is not None:
@@ -64,7 +64,7 @@ async def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | No
     return user.to_dict()
 
 
-async def modify_user(session: Any, info: UserModifyInfo) -> None:
+async def modify_user(session: Any, info: UserModifyInfo) -> Dict[str, Any]:
     log.info("Updating user %s", info.login)
     user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user is None:
@@ -84,6 +84,7 @@ async def modify_user(session: Any, info: UserModifyInfo) -> None:
         changed = True
     if changed:
         user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
+    return user.to_dict()
 
 
 async def delete_user(session: Any, info: UserDeleteInfo) -> None:
@@ -103,6 +104,11 @@ async def authenticate_user(session: Any, info: UserAuthenticateInfo) -> Tuple[b
     return False, None
 
 
-async def get_user_by_api_key(session: Any, info: UserLookupApiKey) -> Dict[str, Any] | None:
-    user = (await session.scalars(select(User).where(User.api_key == info.api_key))).one_or_none()
+async def get_user_by_api_key(session: Any, api_key: ApiKey) -> Dict[str, Any] | None:
+    user = (await session.scalars(select(User).where(User.api_key == api_key))).one_or_none()
+    return user.to_dict() if user else None
+
+
+async def get_user_by_login(session: Any, login: NickName) -> Dict[str, Any] | None:
+    user = (await session.scalars(select(User).where(User.login == login))).one_or_none()
     return user.to_dict() if user else None
