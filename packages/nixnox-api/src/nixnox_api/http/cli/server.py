@@ -11,7 +11,6 @@
 import logging
 from argparse import ArgumentParser, Namespace
 
-from typing import Any
 
 # ---------------------------
 # Third-party library imports

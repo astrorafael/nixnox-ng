@@ -19,8 +19,7 @@ classifiers = [
 ]
 
 dependencies = [
-   "nixnox-core" 
-  
+   "nixnox-api" 
 ]
 
 

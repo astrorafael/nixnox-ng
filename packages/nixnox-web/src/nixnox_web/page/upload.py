@@ -17,8 +17,8 @@ from streamlit.connections import SQLConnection
 # Other libraries
 # ---------------
 
-import nixnox_core as nx
-from nixnox_core.noasync.ecsv import uploader
+import nixnox_api.core as nx
+from nixnox_api.core.noasync.ecsv import uploader
 
 # ----------------
 # Global variables

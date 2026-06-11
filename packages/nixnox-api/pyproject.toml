@@ -1,7 +1,7 @@
 [project]
 name = "nixnox-api"
 dynamic = ["version"]
-description = "NIXNOX HTTP API"
+description = "NIXNOX core library and HTTP API"
 readme = "README.md"
 requires-python = ">=3.12"
 license-files = ["LICENSE"]
@@ -19,16 +19,23 @@ classifiers = [
 ]
 
 dependencies = [
+    # core subpackage needs these dependencies
+    "nixnox-dao",
+    "geopy",
+    "pytz",
+    "timezonefinder",
+    "astropy",
+    "scipy",
+    "matplotlib",
+    # http subpackage needs these dependencies
     "pydantic",
     "fastapi[standard-no-fastapi-cloud-cli]",
-    "nixnox-dao",
-    "nixnox-core",
 ]
 
 
 [project.scripts]
 # Additional tools.
-nx-api-server = "nixnox_api.cli.server:main"
+nx-api-server = "nixnox_api.http.cli.server:main"
 
 # ------------------------
 # DYNAMIC VERSIONING STUFF

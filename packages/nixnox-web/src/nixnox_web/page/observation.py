@@ -12,7 +12,7 @@ import streamlit as st
 from streamlit.connections import SQLConnection
 from streamlit import logger
 
-import nixnox_core.noasync.observation as db
+import nixnox_api.core.noasync.observation as db
 
 # -------------
 # Own libraries

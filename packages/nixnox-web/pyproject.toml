@@ -20,7 +20,7 @@ classifiers = [
 
 dependencies = [
     "nixnox-dao",
-    "nixnox-core",
+    "nixnox-api",
     "python-dateutil",
     "streamlit",
     "pydantic",
