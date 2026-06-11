@@ -53,7 +53,7 @@ from nixnox_dao.nixnox.noasync import (
 # local imports
 # -------------
 
-from ..location import geolocate, distance
+from ..geolocation import geolocate, distance
 
 
 from ..excp import AlreadyExistsError, InconsistentCoordinatesError
