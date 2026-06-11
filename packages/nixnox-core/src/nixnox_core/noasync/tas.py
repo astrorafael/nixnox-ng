@@ -334,7 +334,6 @@ class TASImporter:
             result = Organization(
                 name=affil["name"],
                 org_acronym=affil["org_acronym"],
-                org_email=affil["org_acronym"],
                 org_website_url=affil["org_website_url"],
             )
         return result
@@ -361,7 +360,6 @@ class TASImporter:
                 result = Organization(
                     name=name,
                     org_acronym=over_dict["org_acronym"],
-                    org_email=over_dict["org_acronym"],
                     org_website_url=over_dict["org_website_url"],
                 )
         return result

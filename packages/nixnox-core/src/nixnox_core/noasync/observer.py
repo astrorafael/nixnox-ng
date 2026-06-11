@@ -152,14 +152,11 @@ def orgs_lookup(session):
         Organization.name,
         Organization.org_acronym,
         Organization.org_website_url,
-        Organization.org_email,
     ).order_by(asc(Organization.name))
     return session.execute(q).all()
 
 
-def org_update(
-    session: Any, name: str, org_acronym: str, org_website_url: str, org_email: str
-) -> None:
+def org_update(session: Any, name: str, org_acronym: str, org_website_url: str) -> None:
     with session.begin():
         q = select(Organization).where(Organization.name == name)
         organization = session.scalars(q).one_or_none()
@@ -167,14 +164,12 @@ def org_update(
         if organization:
             organization.org_acronym = org_acronym
             organization.org_website_url = org_website_url
-            organization.org_email = org_email
             log.info("YA EXISTE Y LA MODIFICAMOS A %s", organization)
         else:
             organization = Organization(
                 name=name,
                 org_acronym=org_acronym,
                 org_website_url=org_website_url,
-                org_email=org_email,
             )
         session.add(organization)
 

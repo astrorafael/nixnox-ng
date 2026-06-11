@@ -14,7 +14,7 @@ import streamlit as st
 from streamlit.connections import SQLConnection
 from streamlit import logger
 
-from pydantic import BaseModel, ValidationError, EmailStr, HttpUrl
+from pydantic import BaseModel, ValidationError, HttpUrl
 from pydantic.types import StringConstraints
 
 # -----------
@@ -58,10 +58,6 @@ class WebField(BaseModel):
     org_website_url: Optional[HttpUrl] = None
 
 
-class EmailField(BaseModel):
-    org_email: Optional[EmailStr] = None
-
-
 class NickField(BaseModel):
     nickname: Optional[ShortNameStr] = None
 
@@ -91,7 +87,6 @@ org_default_form = {
     "name": DEF_ORG_TEXT,
     "org_acronym": None,
     "org_website_url": None,
-    "org_email": None,
 }
 
 person_default_form = {
@@ -170,7 +165,6 @@ def on_org_selected() -> None:
             "name": info[0],
             "org_acronym": info[1],
             "org_website_url": info[2],
-            "org_email": info[3],
         }
         st.session_state["org"]["selected"] = info
         st.session_state["org"]["delete_button"] = True
@@ -392,12 +386,6 @@ def org_view_form(conn: SQLConnection, form_data: dict[str]) -> None:
         except ValidationError:
             st.error("❌ URL format is not valid")
             org_website_url = None
-        org_email = st.text_input("📧 Email", value=form_data["org_email"])
-        try:
-            org_email = EmailField(org_email=org_email)
-        except ValidationError:
-            st.error("❌ org_email format is not valid")
-            org_email = None
         submitted = st.form_submit_button(
             "**Submit**",
             help="Submit Organization data to database",
@@ -405,9 +393,7 @@ def org_view_form(conn: SQLConnection, form_data: dict[str]) -> None:
             # on_click=on_org_form_submitted,
             use_container_width=False,
         )
-        all_valid = all(
-            map(lambda x: x is not None, [name, org_acronym, org_website_url, org_email])
-        )
+        all_valid = all(map(lambda x: x is not None, [name, org_acronym, org_website_url]))
         if submitted and all_valid:
             with conn.session as session:
                 org_update(
@@ -415,7 +401,6 @@ def org_view_form(conn: SQLConnection, form_data: dict[str]) -> None:
                     name.name,
                     org_acronym.org_acronym,
                     str(org_website_url.org_website_url),
-                    org_email.org_email,
                 )
                 st.session_state["org"]["table"] = orgs_lookup(session)
                 st.session_state["org"]["selected"] = None
