@@ -20,7 +20,7 @@ from typing import Any, Tuple, Dict
 
 from sqlalchemy import select
 
-from nixnox_dao.auth.noasync import User
+from nixnox_dao.auth.asyncio import User
 from nixnox_dao.auth.utils import hash_password
 
 # -----------
@@ -45,9 +45,9 @@ log = logging.getLogger(__name__.split(".")[-1])
 
 
 # Session must point to the auth database
-def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | None:
+async def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | None:
     log.info("Creating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+    user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user is not None:
         raise KeyError(f"User {user.login} already exists")
     now = datetime.now(timezone.utc).replace(microsecond=0)
@@ -64,9 +64,9 @@ def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any] | None:
     return user.to_dict()
 
 
-def modify_user(session: Any, info: UserModifyInfo) -> None:
+async def modify_user(session: Any, info: UserModifyInfo) -> None:
     log.info("Updating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+    user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user is None:
         raise KeyError(f"User {info.login} does not exists")
     changed = False
@@ -86,23 +86,23 @@ def modify_user(session: Any, info: UserModifyInfo) -> None:
         user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
 
 
-def delete_user(session: Any, info: UserDeleteInfo) -> None:
+async def delete_user(session: Any, info: UserDeleteInfo) -> None:
     log.info("Deleting user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+    user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user is None:
         raise KeyError(f"User {info.login} does not exists")
     session.delete(user)
 
 
-def authenticate_user(session: Any, info: UserAuthenticateInfo) -> Tuple[bool, ApiKey | None]:
+async def authenticate_user(session: Any, info: UserAuthenticateInfo) -> Tuple[bool, ApiKey | None]:
     """Autenticar usuario y devolver datos si es válido."""
     log.info("Authenticating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+    user = (await session.scalars(select(User).where(User.login == info.login))).one_or_none()
     if user and verify_password(info.password, user["password_hash"]):
         return True, user.api_key
     return False, None
 
 
-def get_user_by_api_key(session: Any, info: UserLookupApiKey) -> Dict[str, Any] | None:
-    user = session.scalars(select(User).where(User.api_key == info.api_key)).one_or_none()
+async def get_user_by_api_key(session: Any, info: UserLookupApiKey) -> Dict[str, Any] | None:
+    user = (await session.scalars(select(User).where(User.api_key == info.api_key))).one_or_none()
     return user.to_dict() if user else None
