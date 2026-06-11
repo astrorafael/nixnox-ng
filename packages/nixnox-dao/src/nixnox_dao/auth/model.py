@@ -12,6 +12,7 @@
 
 from typing import Type
 from datetime import datetime
+from collections import OrderedDict
 
 # ---------------------
 # Third party libraries
@@ -95,5 +96,24 @@ def make_User(declarative_base: Type) -> Type:
                 f"updated_at={self.updated_at!r}"
                 ")"
             )
+
+        def to_dict(self) -> OrderedDict:
+            """To be written as Astropy's table metadata"""
+            r = OrderedDict(
+                (key, self.__dict__[key])
+                for key in (
+                    "login",
+                    "full_name",
+                    "role",
+                    "api_key",
+                    "created_at",
+                    "updated_at",
+                )
+            )
+            # Patch enum & date values
+            r["role"] = self.role.value
+            r["created_at"] = self.created_at.isoformat()
+            r["updated_at"] = self.updated_at.isoformat()
+            return r
 
     return User

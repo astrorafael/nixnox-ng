@@ -17,7 +17,7 @@ from enum import StrEnum
 LOGIN_LEN = 32
 HASH_LEN = 512
 NAME_LEN = 255
-APIKEY_LEN = 64
+APIKEY_LEN = 43  # 32 bytes encoded in base64 → ~43 chars
 
 
 # Authentication Roles
