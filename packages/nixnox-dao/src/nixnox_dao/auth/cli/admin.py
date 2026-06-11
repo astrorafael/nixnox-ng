@@ -74,7 +74,7 @@ def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> Non
         login=args.login,
         password_hash=hash_password(args.password),
         full_name=" ".join(args.full_name.split("_")),
-        role=AuthRole.USER,
+        role=args.role,
         api_key=secrets.token_urlsafe(32),
         created_at=now,
         updated_at=now,
@@ -137,23 +137,23 @@ def add_args(parser: ArgumentParser) -> None:
     subparser = parser.add_subparsers(dest="command", required=True)
     p = subparser.add_parser(
         "create",
-        parents=[prs.uname(), prs.passwd(), prs.role(), prs.full()],
+        parents=[prs.login(), prs.passwd(), prs.role(), prs.full()],
         help="Create a new user",
     )
     p.set_defaults(func=cli_create_user)
     p = subparser.add_parser(
         "update",
-        parents=[prs.uname(), prs.passwd(), prs.role(), prs.full(), prs.apk()],
+        parents=[prs.login(), prs.passwd(), prs.role(), prs.full(), prs.apk()],
         help="Update user attributes",
     )
     p.set_defaults(func=cli_update_user)
     p = subparser.add_parser(
         "delete",
-        parents=[prs.uname()],
+        parents=[prs.login()],
         help="Delete user",
     )
     p.set_defaults(func=cli_delete_user)
-    p = subparser.add_parser("list", parents=[prs.uname(required=False)], help="Delete user")
+    p = subparser.add_parser("list", parents=[prs.login(required=False)], help="Delete user")
     p.add_argument(
         "--all",
         action="store_true",

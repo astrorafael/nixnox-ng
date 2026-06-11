@@ -37,15 +37,17 @@ env-bak drive=def_drive: (check_mnt drive) (env-backup join(drive, "env", projec
 # Restore .env from storage unit
 env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", project))
 
-# -----------------------
-# Auth Database and tools
-# -----------------------
+# -------------------
+# Databases and tools
+# -------------------
 
+# New Auth database
 authnew verbose="":
     uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
+    uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r admin -f "Admin User"
 
+# Populate auth database
 authusers verbose="":
-     uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r user -f Admin_User
      uv run nx-auth-admin --console --trace {{ verbose }} create -l foo -p 1234 -r user -f The_Foo_User
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
      uv run nx-auth-admin --console --trace {{ verbose }} delete -l foo
@@ -53,17 +55,14 @@ authusers verbose="":
      uv run nx-auth-admin --console --trace {{ verbose }} update -l admin -k -r admin -f Admin_User
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
 
-
-# -------------------------
-# NIXNOX Database and tools
-# -------------------------
-
-# Starts a new SQLite database export migration cycle   
-anew verbose="":
-    #!/usr/bin/env bash
-    set -exuo pipefail
+# New NIXNOX database  
+nxnew verbose="":
     uv run nx-db-schema --console --log-file nixnox.log {{ verbose }}
     uv run nx-db-populate --console --trace --log-file nixnox.log {{ verbose }} all --batch-size 25000
+   
+
+# Start all databases afresh  
+anew verbose="": (authnew verbose) (nxnew verbose)
    
 
 # Starts a new SQLD database export migration cycle
