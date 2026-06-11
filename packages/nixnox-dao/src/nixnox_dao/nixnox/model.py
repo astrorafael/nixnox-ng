@@ -226,10 +226,10 @@ def make_Observer(declarative_base: Type) -> Type:
         type: Mapped[ObserverType] = mapped_column(ObserverCol, nullable=False)
 
         # Person / Organization full name
-        name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=False
-        )
+        name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=False)
 
-        # Person / Organization nickname
+        # Person / Organization nickname. Organizations created for affiliation purposes
+        # may have a NULL nickname.
         nickname: Mapped[str] = mapped_column(String(NICK_LEN), nullable=True)
 
         # We can't set an UniqueConstraint on name, valid_since because this applies
@@ -262,7 +262,7 @@ def make_Person(observer: Type) -> Type:
         observer_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
-        
+
         # Observer (individual) affiliation to an organization name
         affiliation_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), nullable=True, use_existing_column=True
@@ -289,7 +289,6 @@ def make_Person(observer: Type) -> Type:
             foreign_keys=affiliation_id,
             remote_side=observer_id,
         )
-        # affiliation: Mapped[Optional["Organization"]] = relationship()
 
         def to_dict(self) -> OrderedDict:
             r = super().to_dict()
@@ -312,18 +311,14 @@ def make_Organization(observer: Type) -> Type:
         observer_id: Mapped[int] = mapped_column(
             ForeignKey("observer_t.observer_id"), primary_key=True, use_existing_column=True
         )
-        
+
         # Organization org_acronym
         org_acronym: Mapped[str] = mapped_column(
             String(16), nullable=True, use_existing_column=True
         )
-        # Person/Organization website URL
+        # Organization website URL
         org_website_url: Mapped[str] = mapped_column(
             String(255), nullable=True, use_existing_column=True
-        )
-        # Person/Organization contact org_email
-        org_email: Mapped[str] = mapped_column(
-            String(EMAIL_LEN), nullable=True, use_existing_column=True
         )
 
         __mapper_args__ = {
@@ -335,7 +330,6 @@ def make_Organization(observer: Type) -> Type:
             r = super().to_dict()
             r["org_acronym"] = self.org_acronym
             r["org_website_url"] = self.org_website_url
-            r["org_email"] = self.org_email
             return r
 
     return Organization
