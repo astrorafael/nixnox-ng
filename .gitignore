@@ -19,7 +19,6 @@ secrets.toml
 *.log
 *.txt
 !requirements.txt
-test*.py
 # This is experimental
 sqld-*
 data.sqld/
