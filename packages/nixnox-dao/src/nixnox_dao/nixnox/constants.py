@@ -15,6 +15,7 @@ from enum import StrEnum
 
 from nixnox_dao.auth.constants import NAME_LEN as AUTH_NAME_LEN, LOGIN_LEN as AUTH_LOGIN_LEN
 
+
 class Temperature(StrEnum):
     UNKNOWN = "No temperature"
     INITIAL_FINAL = "Initial & Final temperatures"
@@ -79,7 +80,6 @@ class AuthRole(StrEnum):
 
 NAME_LEN = AUTH_NAME_LEN
 NICK_LEN = AUTH_LOGIN_LEN
-EMAIL_LEN = 64
 PLACE_LEN = 255
 POPUCEN_LEN = 255
 SUBREG_LEN = 255
@@ -93,4 +93,3 @@ DIGEST_LEN = 64
 WEATHER_LEN = 255
 URL_LEN = 255
 OTHEROBS_LEN = 255
-

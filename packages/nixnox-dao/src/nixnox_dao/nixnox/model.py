@@ -46,7 +46,6 @@ from .constants import (
     PopulationCentre,
     NAME_LEN,
     NICK_LEN,
-    EMAIL_LEN,
     PLACE_LEN,
     POPUCEN_LEN,
     SUBREG_LEN,
