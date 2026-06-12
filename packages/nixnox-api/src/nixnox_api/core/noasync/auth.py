@@ -19,18 +19,17 @@ from typing import Any, Tuple, Dict
 # ---------------------
 
 from sqlalchemy import select
-
-from nixnox_dao import TOKEN_LEN, AuthRole
+from nixnox_dao import TOKEN_LEN, hash_password, verify_password
 from nixnox_dao.auth.noasync import User
-from nixnox_dao.auth.utils import hash_password
+
 
 # -----------
 # own imports
 # -----------
 
-from ..model.auth import (
-    verify_password,
+from ..model import (
     ApiKey,
+    AuthRole,
     NickName,
     Password,
 )
@@ -40,6 +39,18 @@ from ..model.auth import (
 # -----------------------
 
 log = logging.getLogger(__name__.split(".")[-1])
+
+
+def verify_password(password: Password, password_hash: str) -> bool:
+    """Verifiy incoming password against stored hash"""
+    salt, stored_hash = password_hash.split("$")
+    new_hash = hashlib.pbkdf2_hmac(
+        hash_name="sha256", 
+        password=password.encode(), 
+        salt=salt.encode(), 
+        iterations=100000,
+    ).hex()
+    return new_hash == stored_hash
 
 
 # Session must point to the auth database

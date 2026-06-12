@@ -13,7 +13,7 @@ except (ImportError, PackageNotFoundError, LookupError):
 # Reimports
 # ---------
 
-from .auth.utils import hash_password
+from .auth.utils import hash_password, verify_password
 
 from .nixnox.constants import (
     ObserverType,
@@ -45,6 +45,7 @@ from .auth.constants import AuthRole, APIKEY_LEN, TOKEN_LEN
 __all__ = [
     "__version__",
     "hash_password",
+    "verify_password",
     "ObserverType",
     "ValidState",
     "PhotometerModel",

@@ -1,12 +1,12 @@
 import pytest
 
 
-from nixnox_api.core.model.auth import AuthRole, UserCreateInfo, UserModifyInfo
+from nixnox_api.core.model import AuthRole, ObserverCreateReq, ObserverModifyReq
 
 
 @pytest.fixture()
-def admin(request) -> UserCreateInfo:
-    return UserCreateInfo(
+def admin_cre(request) -> ObserverCreateReq:
+    return ObserverCreateReq(
         login="admin",
         password="1234",
         full_name="Admin User",
@@ -15,8 +15,8 @@ def admin(request) -> UserCreateInfo:
 
 
 @pytest.fixture()
-def admin1(request) -> UserModifyInfo:
-    return UserModifyInfo(
+def admin_mod(request) -> ObserverModifyReq:
+    return ObserverModifyReq(
         login="admin",
-        api_key=True,
+        new_api_key=True,
     )

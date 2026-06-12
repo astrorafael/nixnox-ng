@@ -1,10 +1,11 @@
 import pytest
 import logging
 from argparse import Namespace
+from typing import Any
 
 from lica.sqlalchemy import sqa_logging
 
-from nixnox_api.core.model.auth import APIKEY_LEN
+from nixnox_api.core.model import APIKEY_LEN
 from nixnox_api.core.noasync.auth import (
     create_user,
     modify_user,
@@ -31,35 +32,35 @@ def session(request):
 
 
 @pytest.fixture(scope="function")
-def created_admin(session, admin):
+def admin(session, admin_cre) -> dict[str, Any]:
     with session.begin():
         user = create_user(
-            session=session, login=admin.login, password=admin.password, role=admin.role
+            session=session, login=admin_cre.login, password=admin_cre.password, role=admin_cre.role
         )
         return user
 
 
-def test_create_user(session, admin):
+def test_create_user(session, admin_cre):
     with session.begin():
         user = create_user(
-            session=session, login=admin.login, password=admin.password, role=admin.role
+            session=session, login=admin_cre.login, password=admin_cre.password, role=admin_cre.role
         )
-        assert user["login"] == admin.login
-        assert user["role"] == admin.role
+        assert user["login"] == admin_cre.login
+        assert user["role"] == admin_cre.role
         assert len(user["api_key"]) == APIKEY_LEN
 
 
-def test_read_user(session, admin, created_admin):
+def test_read_user(session, admin):
     with session.begin():
-        user = get_user_by_login(session=session, login=admin.login)
+        user = get_user_by_login(session=session, login=admin["login"])
         assert user is not None
 
 
-def test_modif_user(session, admin1, created_admin):
+def test_modif_user(session, admin_mod, admin):
     with session.begin():
-        user = get_user_by_login(session=session, login=admin1.login)
+        user = get_user_by_login(session=session, login=admin_mod.login)
         assert user is not None
         old_api_key = user["api_key"]
-        user = modify_user(session=session, login=admin1.login, new_api_key=admin1.api_key)
-        assert user["login"] == admin1.login
+        user = modify_user(session=session, login=admin_mod.login, new_api_key=admin_mod.new_api_key)
+        assert user["login"] == admin_mod.login
         assert user["api_key"] != old_api_key

@@ -29,17 +29,11 @@ from nixnox_dao import AuthRole, NAME_LEN, NICK_LEN, APIKEY_LEN
 # ---------
 
 PASSWD_LEN = 32
+ACRONYM_LEN = 8
 
 # ------------------
 # Auxiliar functions
 # ------------------
-
-
-def verify_password(password: str, password_hash: str) -> bool:
-    """Verifica contraseña contra hash almacenado."""
-    salt, stored_hash = password_hash.split("$")
-    new_hash = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100000).hex()
-    return new_hash == stored_hash
 
 
 # --------------------
@@ -75,6 +69,12 @@ def v_password(v: str) -> str:
         raise ValidationError(f"password too long: {len(v)} > {PASSWD_LEN}")
     return v
 
+def v_acronym(v: str) -> str:
+    pattern = r"^[a-zA-Z0-9_.]{2," + str(ACRONYM_LEN) + r"}$"
+    if not re.match(pattern, v):
+        raise ValueError(f"acronym must be alphanumeric or _ and . and between 2-{NAME_LEN} chars long")
+    return v.strip().lower()
+
 
 # --------------------
 # Pydantic annotations
@@ -84,27 +84,28 @@ NickName = Annotated[str, AfterValidator(v_nick)]
 FullName = Annotated[str, AfterValidator(v_fullname)]
 Password = Annotated[str, AfterValidator(v_password)]
 ApiKey = Annotated[str, AfterValidator(v_api_key)]
+Acronym = Annotated[str, AfterValidator(v_acronym)]
 
 
-class UserCreateInfo(BaseModel):
+class ObserverCreateReq(BaseModel):
     login: NickName
     password: Password
     full_name: FullName
     role: AuthRole
 
 
-class UserModifyInfo(BaseModel):
+class ObserverModifyReq(BaseModel):
     login: NickName
     password: Optional[Password] = None
     full_name: Optional[FullName] = None
     role: Optional[AuthRole] = None
-    api_key: bool = False  # generate new api key ?
+    new_api_key: bool = False  # generate new api key ?
 
 
-class UserDeleteInfo(BaseModel):
+class ObserverDeleteReq(BaseModel):
     login: NickName
 
 
-class UserAuthenticateInfo(BaseModel):
+class ObserverAuthenticateReq(BaseModel):
     login: NickName
     password: Password
