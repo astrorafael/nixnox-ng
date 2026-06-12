@@ -18,5 +18,6 @@ def admin_cre(request) -> ObserverCreateReq:
 def admin_mod(request) -> ObserverModifyReq:
     return ObserverModifyReq(
         login="admin",
+        password="5678",
         new_api_key=True,
     )

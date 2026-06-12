@@ -41,18 +41,6 @@ from ..model import (
 log = logging.getLogger(__name__.split(".")[-1])
 
 
-def verify_password(password: Password, password_hash: str) -> bool:
-    """Verifiy incoming password against stored hash"""
-    salt, stored_hash = password_hash.split("$")
-    new_hash = hashlib.pbkdf2_hmac(
-        hash_name="sha256", 
-        password=password.encode(), 
-        salt=salt.encode(), 
-        iterations=100000,
-    ).hex()
-    return new_hash == stored_hash
-
-
 # Session must point to the auth database
 def create_user(
     session: Any, login: NickName, password: Password, role: AuthRole
@@ -80,7 +68,7 @@ def modify_user(
     password: Password = None,
     role: AuthRole = None,
     new_api_key: bool = False,
-) -> Dict[str, Any]:
+) -> None:
     log.info("Updating user %s", login)
     user = session.scalars(select(User).where(User.login == login)).one_or_none()
     if user is None:
@@ -97,7 +85,7 @@ def modify_user(
         changed = True
     if changed:
         user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
-    return user.to_dict()
+    
 
 
 def delete_user(session: Any, login: NickName) -> None:
@@ -114,7 +102,7 @@ def authenticate_user(
     """Autenticar usuario y devolver datos si es válido."""
     log.info("Authenticating user %s", login)
     user = session.scalars(select(User).where(User.login == login)).one_or_none()
-    if user and verify_password(password, user["password_hash"]):
+    if user and verify_password(password, user.password_hash):
         return True, user.api_key
     return False, None
 

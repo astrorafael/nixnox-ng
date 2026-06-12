@@ -67,7 +67,7 @@ async def modify_user(
     password: Password = None,
     role: AuthRole = None,
     new_api_key: bool = False,
-) -> Dict[str, Any]:
+) -> None:
     log.info("Updating user %s", login)
     user = (await session.scalars(select(User).where(User.login == login))).one_or_none()
     if user is None:
@@ -84,7 +84,7 @@ async def modify_user(
         changed = True
     if changed:
         user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
-    return user.to_dict()
+    
 
 
 async def delete_user(session: Any, login: NickName) -> None:
@@ -101,7 +101,7 @@ async def authenticate_user(
     """Autenticar usuario y devolver datos si es válido."""
     log.info("Authenticating user %s", login)
     user = (await session.scalars(select(User).where(User.login == login))).one_or_none()
-    if user and verify_password(password, user["password_hash"]):
+    if user and verify_password(password, user.password_hash):
         return True, user.api_key
     return False, None
 

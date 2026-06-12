@@ -95,11 +95,12 @@ def make_User(declarative_base: Type) -> Type:
             )
 
         def to_dict(self) -> OrderedDict:
-            """To be written as Astropy's table metadata"""
+            """To be exported somewhere else"""
             r = OrderedDict(
                 (key, self.__dict__[key])
                 for key in (
                     "login",
+                    "password_hash",
                     "role",
                     "api_key",
                     "created_at",
