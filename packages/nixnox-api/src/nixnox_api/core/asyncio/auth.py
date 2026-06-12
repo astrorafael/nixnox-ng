@@ -52,7 +52,6 @@ async def create_user(
     user = User(
         login=login,
         password_hash=hash_password(password),
-        full_name=full_name,
         role=role,
         api_key=secrets.token_urlsafe(32),
         created_at=now,
@@ -74,13 +73,10 @@ async def modify_user(
     if user is None:
         raise KeyError(f"User {login} does not exists")
     changed = False
-    if full_name is not None:
-        user.full_name = full_name
-        changed = True
     if password is not None:
         user.password_hash = hash_password(password)
         changed = True
-    if api_key:
+    if new_api_key:
         user.api_key = secrets.token_urlsafe(32)
         changed = True
     if role is not None and role != user.role:
