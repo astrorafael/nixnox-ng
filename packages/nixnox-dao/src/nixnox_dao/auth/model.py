@@ -32,7 +32,7 @@ from lica.sqlalchemy.metadata import metadata
 # Own modules
 # -----------
 
-from .constants import AuthRole, LOGIN_LEN, HASH_LEN, NAME_LEN, APIKEY_LEN
+from .constants import AuthRole, LOGIN_LEN, HASH_LEN, APIKEY_LEN
 
 # ================
 # Module constants
@@ -74,8 +74,6 @@ def make_User(declarative_base: Type) -> Type:
         password_hash: Mapped[str] = mapped_column(String(HASH_LEN), nullable=False)
         # authentication role
         role: Mapped[AuthRole] = mapped_column(RoleCol, nullable=False)
-        # User full name
-        full_name: Mapped[str] = mapped_column(String(NAME_LEN), nullable=False)
         # URL-safe, 32 bytes base64 encoded API Key
         api_key: Mapped[str] = mapped_column(String(APIKEY_LEN), unique=True)
         # Creation date
@@ -90,7 +88,6 @@ def make_User(declarative_base: Type) -> Type:
                 f"login={self.login!r}, "
                 f"role={self.role!r}, "
                 f"api_key={self.api_key!r}, "
-                f"full_name={self.full_name!r}, "
                 f"password_hash={self.password_hash!r}, "
                 f"created_at={self.created_at!r}, "
                 f"updated_at={self.updated_at!r}"
@@ -103,7 +100,6 @@ def make_User(declarative_base: Type) -> Type:
                 (key, self.__dict__[key])
                 for key in (
                     "login",
-                    "full_name",
                     "role",
                     "api_key",
                     "created_at",

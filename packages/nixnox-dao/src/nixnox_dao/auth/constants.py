@@ -12,11 +12,16 @@
 
 from enum import StrEnum
 
-# column lengths
+# -------------
+# local imports
+# -------------
 
-LOGIN_LEN = 32
+from nixnox_dao.nixnox.constants import NICK_LEN as LOGIN_LEN  # noqa: F401
+
+# additional column lengths
+
 HASH_LEN = 512
-NAME_LEN = 255
+TOKEN_LEN = 32
 APIKEY_LEN = 43  # 32 bytes encoded in base64 → ~43 chars
 
 

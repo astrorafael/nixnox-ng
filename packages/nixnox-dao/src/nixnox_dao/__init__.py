@@ -25,6 +25,7 @@ from .nixnox.constants import (
     Timestamp,
     PopulationCentre,
     NICK_LEN,
+    NAME_LEN,
     PLACE_LEN,
     POPUCEN_LEN,
     SUBREG_LEN,
@@ -39,7 +40,7 @@ from .nixnox.constants import (
     URL_LEN,
     OTHEROBS_LEN,
 )
-from .auth.constants import AuthRole, LOGIN_LEN, HASH_LEN, NAME_LEN, APIKEY_LEN
+from .auth.constants import AuthRole, APIKEY_LEN
 
 __all__ = [
     "__version__",
@@ -53,11 +54,9 @@ __all__ = [
     "Timestamp",
     "PopulationCentre",
     "AuthRole",
-    "LOGIN_LEN",
-    "HASH_LEN",
     "NAME_LEN",
-    "APIKEY_LEN",
     "NICK_LEN",
+    "APIKEY_LEN",
     "PLACE_LEN",
     "POPUCEN_LEN",
     "SUBREG_LEN",

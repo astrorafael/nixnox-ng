@@ -59,18 +59,6 @@ def role() -> ArgumentParser:
     return parser
 
 
-def full() -> ArgumentParser:
-    parser = ArgumentParser(add_help=False)
-    parser.add_argument(
-        "-f",
-        "--full-name",
-        type=str,
-        default=None,
-        help="User full name without spaces, quote or use _ instead (default %(default)s)",
-    )
-    return parser
-
-
 def apk() -> ArgumentParser:
     parser = ArgumentParser(add_help=False)
     parser.add_argument(

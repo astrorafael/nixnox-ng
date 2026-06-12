@@ -32,7 +32,7 @@ from lica.cli import execute
 from nixnox_dao import __version__
 from nixnox_dao.auth.noasync import User
 from nixnox_dao.auth.utils import hash_password
-from nixnox_dao.auth.constants import AuthRole
+from nixnox_dao.auth.constants import TOKEN_LEN
 from .util import parser as prs
 
 # ----------------
@@ -73,9 +73,8 @@ def cli_create_user(session: Session, args: Namespace, log: Logger = log) -> Non
     user = User(
         login=args.login,
         password_hash=hash_password(args.password),
-        full_name=" ".join(args.full_name.split("_")),
         role=args.role,
-        api_key=secrets.token_urlsafe(32),
+        api_key=secrets.token_urlsafe(TOKEN_LEN),  # 32 bytes base64 encoded => 43 bytes approx.
         created_at=now,
         updated_at=now,
     )
@@ -99,9 +98,6 @@ def cli_update_user(session: Session, args: Namespace, log: Logger = log) -> Non
         if user is None:
             raise KeyError(f"User {args.login} does not exists")
         changed = False
-        if args.full_name is not None:
-            user.full_name = " ".join(args.full_name.split("_"))
-            changed = True
         if args.password is not None:
             user.password_hash = hash_password(args.password)
             changed = True
@@ -137,13 +133,13 @@ def add_args(parser: ArgumentParser) -> None:
     subparser = parser.add_subparsers(dest="command", required=True)
     p = subparser.add_parser(
         "create",
-        parents=[prs.login(), prs.passwd(), prs.role(), prs.full()],
+        parents=[prs.login(), prs.passwd(), prs.role()],
         help="Create a new user",
     )
     p.set_defaults(func=cli_create_user)
     p = subparser.add_parser(
         "update",
-        parents=[prs.login(), prs.passwd(), prs.role(), prs.full(), prs.apk()],
+        parents=[prs.login(), prs.passwd(), prs.role(), prs.apk()],
         help="Update user attributes",
     )
     p.set_defaults(func=cli_update_user)

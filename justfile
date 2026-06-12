@@ -44,15 +44,15 @@ env-rst drive=def_drive: (check_mnt drive) (env-restore join(drive, "env", proje
 # New Auth database
 authnew verbose="":
     uv run nx-auth-schema --console --log-file nixnox.log {{ verbose }}
-    #uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r admin -f "Admin User"
+    #uv run nx-auth-admin --console --trace {{ verbose }} create -l admin -p 1234 -r admin
 
 # Populate auth database
 authusers verbose="":
-     uv run nx-auth-admin --console --trace {{ verbose }} create -l foo -p 1234 -r user -f The_Foo_User
+     uv run nx-auth-admin --console --trace {{ verbose }} create -l foo -p 1234 -r user
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
      uv run nx-auth-admin --console --trace {{ verbose }} delete -l foo
      uv run nx-auth-admin --console --trace {{ verbose }} list -l admin
-     uv run nx-auth-admin --console --trace {{ verbose }} update -l admin -k -r admin -f Admin_User
+     uv run nx-auth-admin --console --trace {{ verbose }} update -l admin -k -r user
      uv run nx-auth-admin --console --trace {{ verbose }} list --all
 
 # New NIXNOX database  
