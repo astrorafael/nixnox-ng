@@ -1,9 +1,8 @@
 # TODO
 
 ## next-generation
-* utilidad local de gestion de usuarios (CRUD)
-
-	* completar el modulo admin con las funciones parser(). ¿como parseamos el full name? ¿con _ ?
+* unitary testing
+  - problemas con el scope tipo function al modificar un usuario en el auth
 
 * consultar como se añade la api key en una peticon http
 	curl https://api.example.com/endpoint \

@@ -30,22 +30,36 @@ def session(request):
     engine.dispose()
 
 
+@pytest.fixture(scope="function")
+def created_admin(session, admin):
+    with session.begin():
+        user = create_user(
+            session=session, login=admin.login, password=admin.password, role=admin.role
+        )
+        return user
+
+
 def test_create_user(session, admin):
     with session.begin():
-        user = create_user(session=session, info=admin)
+        user = create_user(
+            session=session, login=admin.login, password=admin.password, role=admin.role
+        )
         assert user["login"] == admin.login
         assert user["role"] == admin.role
-        assert user["full_name"] == admin.full_name
         assert len(user["api_key"]) == APIKEY_LEN
 
 
-def test_modif_user(session, admin1):
+def test_read_user(session, admin, created_admin):
+    with session.begin():
+        user = get_user_by_login(session=session, login=admin.login)
+        assert user is not None
+
+
+def test_modif_user(session, admin1, created_admin):
     with session.begin():
         user = get_user_by_login(session=session, login=admin1.login)
         assert user is not None
         old_api_key = user["api_key"]
-        user = modify_user(session=session, info=admin1)
+        user = modify_user(session=session, login=admin1.login, new_api_key=admin1.api_key)
         assert user["login"] == admin1.login
-        assert user["role"] == admin1.role
-        assert user["full_name"] == admin1.full_name
         assert user["api_key"] != old_api_key

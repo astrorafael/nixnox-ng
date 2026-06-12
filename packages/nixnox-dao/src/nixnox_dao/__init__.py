@@ -40,7 +40,7 @@ from .nixnox.constants import (
     URL_LEN,
     OTHEROBS_LEN,
 )
-from .auth.constants import AuthRole, APIKEY_LEN
+from .auth.constants import AuthRole, APIKEY_LEN, TOKEN_LEN
 
 __all__ = [
     "__version__",
@@ -57,6 +57,7 @@ __all__ = [
     "NAME_LEN",
     "NICK_LEN",
     "APIKEY_LEN",
+    "TOKEN_LEN",
     "PLACE_LEN",
     "POPUCEN_LEN",
     "SUBREG_LEN",

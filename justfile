@@ -134,12 +134,37 @@ sqld target="debug":
 # PyTest driver
 # =============
 
-test pkg async module:
-    uv run pytest packages/nixnox-api/tests/{{pkg}}/{{async}}/test_{{module}}.py
+# noasync package test driver
+test pkg module:
+    #!/usr/bin/env bash   
+    set -exuo pipefail
+    NIXNOX_DB_URL=sqlite:///nixnox.db
+    AUTH_DB_URL=sqlite:///auth.db
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/noasync/test_{{module}}.py
 
-testf pkg async module func:
-    uv run pytest packages/nixnox-api/tests/{{pkg}}/{{async}}/test_{{module}}.py::test_{{func}}
+# noasync function test driver
+testf pkg module func:
+    #!/usr/bin/env bash   
+    set -exuo pipefail
+    NIXNOX_DB_URL=sqlite:///nixnox.db
+    AUTH_DB_URL=sqlite:///auth.db
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/noasync/test_{{module}}.py::test_{{func}}
 
+# asyncio package test driver
+atest pkg module:
+    #!/usr/bin/env bash   
+    set -exuo pipefail
+    NIXNOX_DB_URL=sqlite+aiosqlite:///nixnox.db
+    AUTH_DB_URL=sqlite+aiosqlite:///auth.db
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/asyncio/test_{{module}}.py
+
+# asyncio function test driver
+atestf pkg module func:
+    #!/usr/bin/env bash   
+    set -exuo pipefail
+    NIXNOX_DB_URL=sqlite+aiosqlite:///nixnox.db
+    AUTH_DB_URL=sqlite+aiosqlite:///auth.db
+    uv run pytest packages/nixnox-api/tests/{{pkg}}/asyncio/test_{{module}}.py::test_{{func}}
 
 # =======================================================================
 

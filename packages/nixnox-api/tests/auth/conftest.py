@@ -18,6 +18,5 @@ def admin(request) -> UserCreateInfo:
 def admin1(request) -> UserModifyInfo:
     return UserModifyInfo(
         login="admin",
-        full_name="The Admin User",
         api_key=True,
     )

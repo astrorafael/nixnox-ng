@@ -20,6 +20,7 @@ from typing import Any, Tuple, Dict
 
 from sqlalchemy import select
 
+from nixnox_dao import TOKEN_LEN, AuthRole
 from nixnox_dao.auth.noasync import User
 from nixnox_dao.auth.utils import hash_password
 
@@ -30,11 +31,8 @@ from nixnox_dao.auth.utils import hash_password
 from ..model.auth import (
     verify_password,
     ApiKey,
-    UserCreateInfo,
-    UserModifyInfo,
-    UserDeleteInfo,
-    UserAuthenticateInfo,
     NickName,
+    Password,
 )
 
 # -----------------------
@@ -45,18 +43,19 @@ log = logging.getLogger(__name__.split(".")[-1])
 
 
 # Session must point to the auth database
-def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any]:
-    log.info("Creating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+def create_user(
+    session: Any, login: NickName, password: Password, role: AuthRole
+) -> Dict[str, Any]:
+    log.info("Creating user %s", login)
+    user = session.scalars(select(User).where(User.login == login)).one_or_none()
     if user is not None:
-        raise KeyError(f"User {user.login} already exists")
+        raise KeyError(f"User {login} already exists")
     now = datetime.now(timezone.utc).replace(microsecond=0)
     user = User(
-        login=info.login,
-        password_hash=hash_password(info.password),
-        full_name=info.full_name,
-        role=info.role,
-        api_key=secrets.token_urlsafe(32),
+        login=login,
+        password_hash=hash_password(password),
+        role=role,
+        api_key=secrets.token_urlsafe(TOKEN_LEN),
         created_at=now,
         updated_at=now,
     )
@@ -64,42 +63,47 @@ def create_user(session: Any, info: UserCreateInfo) -> Dict[str, Any]:
     return user.to_dict()
 
 
-def modify_user(session: Any, info: UserModifyInfo) -> Dict[str, Any]:
-    log.info("Updating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+def modify_user(
+    session: Any,
+    login: NickName,
+    password: Password = None,
+    role: AuthRole = None,
+    new_api_key: bool = False,
+) -> Dict[str, Any]:
+    log.info("Updating user %s", login)
+    user = session.scalars(select(User).where(User.login == login)).one_or_none()
     if user is None:
-        raise KeyError(f"User {info.login} does not exists")
+        raise KeyError(f"User {login} does not exists")
     changed = False
-    if info.full_name is not None:
-        user.full_name = info.full_name
+    if password is not None:
+        user.password_hash = hash_password(password)
         changed = True
-    if info.password is not None:
-        user.password_hash = hash_password(info.password)
+    if new_api_key:
+        user.api_key = secrets.token_urlsafe(TOKEN_LEN)
         changed = True
-    if info.api_key:
-        user.api_key = secrets.token_urlsafe(32)
-        changed = True
-    if info.role is not None and info.role != user.role:
-        user.role = info.role
+    if role is not None and role != user.role:
+        user.role = role
         changed = True
     if changed:
         user.updated_at = datetime.now(timezone.utc).replace(microsecond=0)
     return user.to_dict()
 
 
-def delete_user(session: Any, info: UserDeleteInfo) -> None:
-    log.info("Deleting user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
+def delete_user(session: Any, login: NickName) -> None:
+    log.info("Deleting user %s", login)
+    user = session.scalars(select(User).where(User.login == login)).one_or_none()
     if user is None:
-        raise KeyError(f"User {info.login} does not exists")
+        raise KeyError(f"User {login} does not exists")
     session.delete(user)
 
 
-def authenticate_user(session: Any, info: UserAuthenticateInfo) -> Tuple[bool, ApiKey | None]:
+def authenticate_user(
+    session: Any, login: NickName, password: Password
+) -> Tuple[bool, ApiKey | None]:
     """Autenticar usuario y devolver datos si es válido."""
-    log.info("Authenticating user %s", info.login)
-    user = session.scalars(select(User).where(User.login == info.login)).one_or_none()
-    if user and verify_password(info.password, user["password_hash"]):
+    log.info("Authenticating user %s", login)
+    user = session.scalars(select(User).where(User.login == login)).one_or_none()
+    if user and verify_password(password, user["password_hash"]):
         return True, user.api_key
     return False, None
 
