@@ -97,3 +97,12 @@ async def test_authenticate_user_2(session, admin2, admin_cre):
         user = await get_user_by_login(session=session, login=admin_cre.login)
         result, api_key = await authenticate_user(session=session, login=admin_cre.login, password=admin_cre.password)
         assert result == False
+
+@pytest.mark.asyncio
+async def test_api_key(session, admin1):
+    async with session.begin():
+        user = await get_user_by_api_key(session=session, api_key="foo")
+        assert user is None
+        user = await get_user_by_api_key(session=session, api_key=admin1["api_key"])
+        assert user is not None and user["api_key"] == admin1["api_key"]
+
