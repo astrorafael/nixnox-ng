@@ -25,7 +25,7 @@ from lica.cli import execute
 # -------------
 
 from nixnox_api import __version__
-from ..fastapi import app as app
+from nixnox_api.http import app as app # load all FastApiEndopints
 
 # get the module logger
 log = logging.getLogger("http")

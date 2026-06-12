@@ -11,7 +11,8 @@
 
 import re
 import hashlib
-from typing import Annotated, Optional
+from datetime import datetime, timezone
+from typing import Annotated, Optional, Union
 
 # ---------------------
 # Third party libraries
@@ -20,7 +21,9 @@ from typing import Annotated, Optional
 from pydantic import (
     BaseModel,
     ValidationError,
+    BeforeValidator,
     AfterValidator,
+    HttpUrl,
 )
 from nixnox_dao import AuthRole, NAME_LEN, NICK_LEN, APIKEY_LEN
 
@@ -30,6 +33,16 @@ from nixnox_dao import AuthRole, NAME_LEN, NICK_LEN, APIKEY_LEN
 
 PASSWD_LEN = 32
 ACRONYM_LEN = 8
+
+# Sequence of possible timestamp formats
+TSTAMP_FORMAT = (
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%dT%H:%M:%SZ",
+    "%Y-%m-%d %H:%M:%SZ",
+    "%Y-%m-%dT%H:%M:%S%z",  # timezone aware that must be converted to UTC
+    "%Y-%m-%d %H:%M:%S%z",  # timezone aware that must be converted to UTC
+)
 
 # ------------------
 # Auxiliar functions
@@ -75,6 +88,22 @@ def v_acronym(v: str) -> str:
         raise ValueError(f"acronym must be alphanumeric or _ and . and between 2-{NAME_LEN} chars long")
     return v.strip().lower()
 
+def v_datetime(value: Union[str, datetime, None]) -> datetime:
+    if value is None:
+        return (datetime.now(timezone.utc) + timedelta(seconds=0.5)).replace(microsecond=0)
+    if isinstance(value, datetime):
+        return value
+    if not isinstance(value, str):
+        raise ValidationError("tstamp must be a string or datetime.")
+    for i, fmt in enumerate(TSTAMP_FORMAT):
+        try:
+            if i < 4:
+                return datetime.strptime(value, fmt).replace(tzinfo=timezone.utc)
+            else:
+                return datetime.strptime(value, fmt).astimezone(timezone.utc)
+        except ValueError:
+            continue
+    raise ValidationError(f"{value} tstamp must be in one of {TSTAMP_FORMAT} formats.")
 
 # --------------------
 # Pydantic annotations
@@ -85,17 +114,26 @@ FullName = Annotated[str, AfterValidator(v_fullname)]
 Password = Annotated[str, AfterValidator(v_password)]
 ApiKey = Annotated[str, AfterValidator(v_api_key)]
 Acronym = Annotated[str, AfterValidator(v_acronym)]
+DateTime = Annotated[Union[str, datetime, None], BeforeValidator(v_datetime)]
 
 
 class ObserverCreateReq(BaseModel):
-    login: NickName
+    nickname: NickName
     password: Password
-    full_name: FullName
     role: AuthRole
+
+class PersonCreateReq(ObserverCreateReq):
+    full_name: FullName
+
+
+class OrganizantionCreateReq(ObserverCreateReq):
+    full_name: FullName
+    acronym: Acronym
+    website: HttpUrl
 
 
 class ObserverModifyReq(BaseModel):
-    login: NickName
+    nickname: NickName
     password: Optional[Password] = None
     full_name: Optional[FullName] = None
     role: Optional[AuthRole] = None

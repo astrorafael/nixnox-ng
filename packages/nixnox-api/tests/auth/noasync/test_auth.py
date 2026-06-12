@@ -35,7 +35,7 @@ def session(request):
 def admin1(session, admin_cre) -> dict[str, Any]:
     with session.begin():
         user = create_user(
-            session=session, login=admin_cre.login, password=admin_cre.password, role=admin_cre.role
+            session=session, login=admin_cre.nickname, password=admin_cre.password, role=admin_cre.role
         )
         return user
 
@@ -43,12 +43,12 @@ def admin1(session, admin_cre) -> dict[str, Any]:
 def admin2(session, admin_cre, admin_mod) -> dict[str, Any]:
     with session.begin():
         create_user(
-            session=session, login=admin_cre.login, password=admin_cre.password, role=admin_cre.role
+            session=session, login=admin_cre.nickname, password=admin_cre.password, role=admin_cre.role
         )
     with session.begin():
-        modify_user(session=session, login=admin_mod.login, password=admin_mod.password, new_api_key=admin_mod.new_api_key)
+        modify_user(session=session, login=admin_mod.nickname, password=admin_mod.password, new_api_key=admin_mod.new_api_key)
     with session.begin():    
-        user = get_user_by_login(session=session, login=admin_mod.login)
+        user = get_user_by_login(session=session, login=admin_mod.nickname)
         return user
         
 
@@ -56,9 +56,9 @@ def admin2(session, admin_cre, admin_mod) -> dict[str, Any]:
 def test_create_user(session, admin_cre):
     with session.begin():
         user = create_user(
-            session=session, login=admin_cre.login, password=admin_cre.password, role=admin_cre.role
+            session=session, login=admin_cre.nickname, password=admin_cre.password, role=admin_cre.role
         )
-        assert user["login"] == admin_cre.login
+        assert user["login"] == admin_cre.nickname
         assert user["role"] == admin_cre.role
         assert len(user["api_key"]) == APIKEY_LEN
 
@@ -71,25 +71,25 @@ def test_read_user(session, admin1):
 
 def test_modif_user(session, admin_mod, admin1):
     with session.begin():
-        user = get_user_by_login(session=session, login=admin_mod.login)
+        user = get_user_by_login(session=session, login=admin_mod.nickname)
         assert user is not None
         old_api_key = user["api_key"]
-        modify_user(session=session, login=admin_mod.login, new_api_key=admin_mod.new_api_key)
+        modify_user(session=session, login=admin_mod.nickname, new_api_key=admin_mod.new_api_key)
     with session.begin():
-        user = get_user_by_login(session=session, login=admin_mod.login)
-        assert user["login"] == admin_mod.login
+        user = get_user_by_login(session=session, login=admin_mod.nickname)
+        assert user["login"] == admin_mod.nickname
         assert user["api_key"] != old_api_key
 
 def test_authenticate_user_1(session, admin1, admin_cre):
     with session.begin():
-        user = get_user_by_login(session=session, login=admin_cre.login)
-        result, api_key = authenticate_user(session=session, login=admin_cre.login, password=admin_cre.password)
+        user = get_user_by_login(session=session, login=admin_cre.nickname)
+        result, api_key = authenticate_user(session=session, login=admin_cre.nickname, password=admin_cre.password)
         assert result == True
 
 def test_authenticate_user_2(session, admin2, admin_cre):
     with session.begin():
-        user = get_user_by_login(session=session, login=admin_cre.login)
-        result, api_key = authenticate_user(session=session, login=admin_cre.login, password=admin_cre.password)
+        user = get_user_by_login(session=session, login=admin_cre.nickname)
+        result, api_key = authenticate_user(session=session, login=admin_cre.nickname, password=admin_cre.password)
         assert result == False
 
 def test_api_key(session, admin1):

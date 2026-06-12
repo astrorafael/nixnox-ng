@@ -7,7 +7,7 @@ from nixnox_api.core.model import AuthRole, ObserverCreateReq, ObserverModifyReq
 @pytest.fixture()
 def admin_cre(request) -> ObserverCreateReq:
     return ObserverCreateReq(
-        login="admin",
+        nickname="admin",
         password="1234",
         full_name="Admin User",
         role=AuthRole.ADMIN,
@@ -17,7 +17,7 @@ def admin_cre(request) -> ObserverCreateReq:
 @pytest.fixture()
 def admin_mod(request) -> ObserverModifyReq:
     return ObserverModifyReq(
-        login="admin",
+        nickname="admin",
         password="5678",
         new_api_key=True,
     )
